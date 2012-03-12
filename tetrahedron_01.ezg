@@ -1,0 +1,12 @@
+2: 123, 130
+8: 130, 115
+18: 141, 142
+#
+Triangle_Equilateral, 30
+Triangle_Equilateral, 32
+Triangle_Equilateral, 40
+Triangle_Equilateral, 42
+#
+2: 42, 2; 40, 1
+8: 40, 2; 30, 2
+18: 32, 0; 40, 0

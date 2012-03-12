@@ -1,0 +1,26 @@
+2: 156, 153
+4: 151, 174
+6: 217, 215
+8: 210, 234
+a: 175, 155
+1a: 165, 180
+1c: 210, 226
+20: 211, 224
+24: 142, 179
+#
+Triangle_Equilateral, 36
+Triangle_Equilateral, 38
+Triangle_Equilateral, 3c
+Triangle_Equilateral, 3e
+Triangle_Equilateral, 42
+Pentagon, 70
+#
+2: 42, 1; 36, 2
+4: 3e, 2; 3c, 0
+6: 3e, 1; 70, 2
+8: 70, 3; 38, 1
+a: 3c, 2; 42, 2
+1a: 38, 2; 3e, 0
+1c: 42, 0; 70, 0
+20: 3c, 1; 70, 1
+24: 36, 1; 38, 0

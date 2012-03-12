@@ -1,0 +1,18 @@
+2: 110, 114
+8: 104, 124
+1c: 133, 91
+20: 96, 140
+22: 116, 129
+#
+Triangle_Equilateral, 30
+Triangle_Equilateral, 32
+Triangle_Equilateral, 3e
+Triangle_Equilateral, 40
+Triangle_Equilateral, 42
+Pentagon, 70
+#
+2: 42, 1; 70, 0
+8: 70, 2; 40, 2
+1c: 70, 3; 3e, 2
+20: 30, 0; 70, 4
+22: 32, 2; 70, 1
