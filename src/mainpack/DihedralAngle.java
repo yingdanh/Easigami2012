@@ -6,4 +6,5 @@ public class DihedralAngle extends MatrixHolder {
 	}
 	public int edgeindex;
 	public double angle;
+	public double sign;
 }

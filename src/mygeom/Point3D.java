@@ -54,7 +54,7 @@ public class Point3D implements Comparable{
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString(){
-		String str = "Point3D: (" + x + ", " + y + ", " + z + ");";
+		String str = "Point3D: (" + x + ", " + y + ", " + z + ")";
 		return str;
 	}
 

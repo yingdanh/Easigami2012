@@ -40,7 +40,7 @@ public class Pattern implements GLEventListener, MouseListener,
 	//private EasigamiPolygon phead = null;
 	double curmat3d[]; // 4x4 matrix represented as 16x1 matrix
 	
-	private final boolean isDebug = true;
+	private final boolean isDebug = false;
 	private Date timeStamp;
 
 	public Pattern(GLCanvas canvas, MainController ctrl) {

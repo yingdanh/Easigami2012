@@ -7,7 +7,7 @@ import org.ejml.ops.CommonOps;
 
 import mygeom.VO3D;
 
-public class Test {
+public class Newton {
 	public static void main(String[] args) {
 		//MatrixChains chain = getTetrahedralVertexChain();
 		//double angle1 = Math.acos(1.0/3.0);
@@ -17,21 +17,23 @@ public class Test {
 		double[] angles = {ao, ao, ao, ao,  ao, ao, ao, ao, ao, ao, ao, ao};
 		MatrixChains chain = getOctahedralVertexChain();
 		
-		System.out.println("f: " + f(chain, angles));
+		System.out.println(f(chain, angles));
 		System.out.println();
 		
 		double dby1 = dfby(chain, angles, 0);
-		System.out.println("dby1: " + dby1);
+		System.out.println(dby1);
 		
-		System.out.println("numDiff: " + numDiff(chain, angles, 0, 1e-6));
+		System.out.println(numDiff(chain, angles, 0, 1e-6));
 		System.out.println();
 		
 		double dby11 = df2by(chain, angles, 0, 0);
-		System.out.println("dby11: " + dby11);
+		System.out.println(dby11);
 		
-		System.out.println("numDiff: " + numDiff(chain, angles, 0, 0, 1e-5));
-		for (int i = 0; i < 500; ++ i) {
-			boolean printStep = ((i + 1)%100) == 0;
+		System.out.println(numDiff(chain, angles, 0, 0, 1e-5));
+		for (int i = 0; i < 100; ++ i) {
+			//boolean printStep = ((i + 1)%100) == 0;
+			boolean printStep = true;
+			
 			angles = nstep(chain, angles, printStep);
 		}
 	}
@@ -138,13 +140,14 @@ public class Test {
 		DenseMatrix64F J = get2d(chain, angles);
 		
 		DenseMatrix64F grad = get1d(chain, angles);
-		DenseMatrix64F mul = vector(l);
+		DenseMatrix64F propose = vector(l);
 
-		boolean solved = CommonOps.solve(J, grad, mul);
+		boolean solved = CommonOps.solve(J, grad, propose);
 		 
 		if (!solved) {
 			throw new RuntimeException("Failed to solve update equation");
 		}
+		CommonOps.scale(-1, propose);
 
 		if (printStep) {
 			EigenDecomposition<DenseMatrix64F> decomp = DecompositionFactory.eigSymm(l, false);
@@ -156,24 +159,72 @@ public class Test {
 			System.out.println("Computed eigenvalues " + printVec(eigs));
 		}
 
-		DenseMatrix64F angv = vector(l);
-		angv.data = angles;
+		DenseMatrix64F angv = vec(angles);
 
 		DenseMatrix64F newAng = vector(l);
-		CommonOps.sub(angv, mul, newAng);
-
+		CommonOps.add(angv, propose, newAng);
+		int i = 0;
+		for (i = 0; i < 10; ++ i) {
+		    boolean verify = verifyProposal(chain, angles, newAng.data, grad, propose);
+		    if (verify) {
+		    	break;
+		    }
+		    else {
+		    	CommonOps.scale(-0.5, propose);
+		    	System.out.println("Halved proposal length to " + Math.sqrt(dot(propose.data, propose.data)));
+				CommonOps.add(angv, propose, newAng);
+		    }
+		}
+		if (i == 10) {
+			throw new RuntimeException("Failed to find acceptable step after 10 tries");
+		}
 		return newAng.data;
 	};
 	
-	// temporary matrix multiplication function until we get a proper matrix library
-	public static double[] matrix_mult(double[][] a, double[] p) {
-		double[] result = new double[3];
-		result[0] = a[0][0]*p[0] + a[0][1]*p[1] + a[0][2]*p[2];
-		result[1] = a[1][0]*p[0] + a[1][1]*p[1] + a[1][2]*p[2];
-		result[2] = a[2][0]*p[0] + a[2][1]*p[1] + a[2][2]*p[2];
-		
-		return result;
+	public static DenseMatrix64F vec(double[] vec) {
+		DenseMatrix64F togo = vector(vec.length);
+		togo.data = vec;
+		return togo;
 	}
+	
+	public static double dot(double[] vec1, double[] vec2) {
+		double togo = 0.0;
+		for (int i = 0; i < vec1.length; ++ i) {
+			togo += vec1[i] * vec2[i];
+		}
+		return togo;
+	}
+	
+	private static boolean verifyProposal(MatrixChains chain, double[] angles,
+			double[] newAng, DenseMatrix64F grad, DenseMatrix64F propose) {
+		for (int i = 0; i < newAng.length; ++ i) {
+			if (newAng[i] <= 0 || newAng[i] >= 2 * Math.PI) {
+				System.out.println("Rejected out of range angle " + newAng[i] + " at index i");
+				return false;
+			}
+		}
+		double descent = dot(grad.data, propose.data);
+		if (descent > 0) {
+			//throw new RuntimeException("Non-reducing gradient direction with slope " + descent);
+		}
+		double oldF = f(chain, angles);
+		double newF = f(chain, newAng);
+		if (newF > oldF + 1e-4 * descent) {
+			System.out.println("Rejected failure of descent step to " + newF);
+			return false;
+		}
+		DenseMatrix64F newGrad = get1d(chain, newAng);
+		// These would both be negative numbers reflecting correct gradient direction
+		double newDescent = dot(newGrad.data, propose.data);
+	//	if (newDescent < 0.9 * descent) {
+	//		System.out.println("Rejected failure of gradient reduce step from " + 
+	//	         descent + " to " + newDescent);
+	//		return false;
+	//	}
+		
+		return true;
+	}
+
 	
 	// Produce 1st derivative of objective function at specified angle setting
 	public static DenseMatrix64F get1d(MatrixChains chain, double[] angles) {
@@ -234,7 +285,8 @@ public class Test {
 			MatrixHolder hi = chain.matrices[i];
 			double[][] matrix = null;
 			if (hi instanceof DihedralAngle) {
-				int di = ((DihedralAngle)hi).edgeindex;
+				DihedralAngle da = (DihedralAngle) hi;
+				int di = da.edgeindex;
 				boolean smashoff = false;
 				double angle;
 				if (di == smashindex1 && di == smashindex2) {
@@ -246,7 +298,7 @@ public class Test {
 				} else {
 					angle = Math.PI - angles[di];
 				}
-				matrix = VO3D.getMatrix_rotateZ(angle);
+				matrix = VO3D.getMatrix_rotateZ(da.sign * angle);
 				if (smashoff) {
 					matrix[2][2] = matrix[3][3] = 0.0;
 				}

@@ -90,6 +90,11 @@ public class VO3D extends Point3D {
 
 		return ZRuvw;
 	}
+	
+	public static double[][] GetBasisTranspose(Point3D axis) {
+		double[][] basis = getBasis(axis);
+		return matrix_transpose(basis);
+	}
 
 	/*
 	 * convert 16x1 array to 4x4 matrix

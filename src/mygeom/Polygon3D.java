@@ -248,7 +248,7 @@ public class Polygon3D {
 				break;
 			}
 		}
-
+		
 		return ps[(e_index + 1) % this.getN()];
 	}
 

@@ -1,4 +1,6 @@
 package mainpack;
+import java.util.Vector;
+
 import mygeom.Point3D;
 import mygeom.Polygon3D;
 import mygeom.VO3D;
@@ -9,11 +11,12 @@ public class Polygon {
 	private int address;
 	private String ptype;
 	private int connection;
-	private Polygon3D poly = null;	
+	private Polygon3D poly = null;	//geometry attributes of Polygon
 	private double mat3d[];		// relative coordinate reference
 	private double matpat[];
-	private boolean isVisited;
-	private boolean isSelected;
+	private boolean isVisited;  // for BFS
+	private boolean isSelected; // for selection
+	private boolean[] unVisitedVertices;
 	private boolean isDebug = false;
 	
 	public Polygon(String ptype, int address){
@@ -32,6 +35,12 @@ public class Polygon {
 			poly = new Polygon3D(5);
 		else if(ptype.equals(AddressBook.Hexagon_Str))
 			poly = new Polygon3D(6);
+		
+		//init the unVisitedVertices for cycles around vertices
+		unVisitedVertices = new boolean[poly.getN()];
+		for(int i=0; i<unVisitedVertices.length; i++){
+			unVisitedVertices[i] = false;
+		}
 	}
 	
 	public int getAddress(){
@@ -172,6 +181,19 @@ public class Polygon {
 			//System.out.println("np: " + np);
 			poly.setAbsVertexAt(j, np);
 		}
+	}
+	
+	public boolean[] getUnVisitedVertices(){
+		return unVisitedVertices;
+	}
+	
+	public int getUnivisitedVertex(){
+		for(int i=0; i<unVisitedVertices.length; i++){
+			if(unVisitedVertices[i] == false){
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	public String toString(){

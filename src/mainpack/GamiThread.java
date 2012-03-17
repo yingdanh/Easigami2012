@@ -22,9 +22,9 @@ public class GamiThread extends Thread {
 	
 	// read an input file, instead of receiving data from Easigami
 	private static final boolean isWritingFile = false; // true - write to a file
-	private String filename = "Truncated Tetrahedron 02" + ".ezg";
+	private String filename = "octahedron_7pieces" + ".ezg";
 	private FileWrite fw;
-	private static final boolean isReadingFile = false;	//true - read a file
+	private static final boolean isReadingFile = true;	//true - read a file
 	private FileRead fr;
 	//private int eg = 0; 
 	//0-tetrahedron; 1-half dodecahedron; 2-cone with pentage as base; 3-truncated tetrahedron
@@ -114,8 +114,10 @@ public class GamiThread extends Thread {
 			//System.out.println("Build the Adjacency Matrix.");
 			ds.buildAdjacencyMatrix();
 			if(isAdjusted){
-				ds.advantagedConfigure();
-				ds.setConfigured(true);
+				//ds.advantagedConfigure();
+				//ds.setConfigured(true);
+				ds.testNewton();
+				//ds.findCyclesVertex();
 			}
 			ds.setReady(true);
 			ctrl.getRenderer().refresh();
@@ -123,6 +125,8 @@ public class GamiThread extends Thread {
 			//ds.setReady(false);
 			//portOpen = false;
 			System.out.println("\n&&&&&& &&&&&& &&&&&&\n");
+			
+			break;
 		}
 		
 		//close the port while not running
@@ -236,7 +240,8 @@ public class GamiThread extends Thread {
 					// if the edge index changes, the polygon 
 					// is connected to the left wing of the hinge
 					if(edgeIndex != -1 && edgeIndex != -2){
-						System.out.println("found one on the left of 0x" + Integer.toString(h.getAddress(), 16) + 
+						if(isDebug)
+							System.out.println("found one on the left of 0x" + Integer.toString(h.getAddress(), 16) + 
 								": 0x" + Integer.toString(p.getAddress(), 16) + ", edge " + edgeIndex);
 						//p.setCoordsPolygon3D(edgeIndex, true); // set coordinates of the polygon
 						h.setLeftPolygon(p);
@@ -258,7 +263,8 @@ public class GamiThread extends Thread {
 					// if the edge index changes, the polygon 
 					// is connected to the left wing of the hinge
 					if(edgeIndex != -1 && edgeIndex != -2){
-						System.out.println("found one on the right of " + Integer.toString(h.getAddress(), 16) + 
+						if(isDebug)
+							System.out.println("found one on the right of " + Integer.toString(h.getAddress(), 16) + 
 								": " + Integer.toString(p.getAddress(), 16) + " " + edgeIndex);
 						//p.setCoordsPolygon3D(edgeIndex, false); //set coordinates of the polygon
 						h.setRightPolygon(p);

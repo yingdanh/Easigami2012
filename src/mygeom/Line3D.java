@@ -38,7 +38,7 @@ public class Line3D {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString(){
-		String str = "";
+		String str = "edge ";
 		str += p1 + ", " + p2;
 		return str;
 	}
