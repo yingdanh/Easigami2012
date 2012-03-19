@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                      http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>Easigami2012</artifactId>
+  <groupId>org.yingdanh</groupId>
+  <version>0.1</version>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <organization>
+    <name>Easigami</name>
+    <url>https://sites.google.com/site/yingdanh/research-pojects/easigami</url>
+  </organization>
+  <inceptionYear>2009</inceptionYear>
+  <packaging>jar</packaging>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <repositories>
+    <repository>
+    <!--"It so happens" that today this repository includes the javax.comm JAR -->
+      <id>OBIBA-Maven2</id>
+      <name>OBIBA Maven 2 Repository</name>
+      <url>http://maven.obiba.org/maven2/</url>
+    </repository>
+  </repositories>
+  <dependencies>  
+    <dependency>
+      <groupId>com.googlecode.efficient-java-matrix-library</groupId>
+      <artifactId>ejml</artifactId>
+      <version>0.18</version>
+    </dependency>
+    <dependency>
+        <groupId>javax.comm</groupId>
+        <artifactId>comm</artifactId>
+        <version>2.0.3</version>
+    </dependency>
+    <dependency>
+        <groupId>net.java.dev.jogl</groupId>
+        <artifactId>jogl</artifactId>
+        <version>1.1.1-rc6</version>
+    </dependency>
+    <dependency>
+        <groupId>net.java.dev.gluegen</groupId>
+        <artifactId>gluegen-rt</artifactId>
+        <version>1.0b05</version>
+    </dependency>
+  </dependencies>
+</project>

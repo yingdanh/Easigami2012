@@ -2,7 +2,6 @@ package mainpack;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-//import rw.FileRead;
 import rw.FileRead;
 import rw.FileWrite;
 
@@ -27,7 +26,7 @@ public class GamiThread extends Thread {
 	private boolean isAdjusted = true;
 	
 	public GamiThread(MainController ctrl, DataStructure ds, CommPortModem modem){
-		super("Easigami 2011");
+		super("Easigami 2012");
 		this.ctrl = ctrl;
 		this.ds = ds;
 		portOpen = true;
