@@ -2,10 +2,6 @@ package mainpack;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.comm.NoSuchPortException;
-import javax.comm.PortInUseException;
-import javax.comm.UnsupportedCommOperationException;
-
 //import rw.FileRead;
 import rw.FileRead;
 import rw.FileWrite;
@@ -120,8 +116,10 @@ public class GamiThread extends Thread {
 				//ds.findCyclesVertex();
 			}
 			ds.setReady(true);
-			ctrl.getRenderer().refresh();
-			ctrl.getPattern().refresh();
+			if (!ctrl.isTestMode()) {
+			    ctrl.getRenderer().refresh();
+			    ctrl.getPattern().refresh();
+			}
 			//ds.setReady(false);
 			//portOpen = false;
 			System.out.println("\n&&&&&& &&&&&& &&&&&&\n");

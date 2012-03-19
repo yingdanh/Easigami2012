@@ -3,10 +3,8 @@ package mainpack;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -18,14 +16,10 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
-import javax.swing.border.EtchedBorder;
 
 import javax.comm.CommPortIdentifier;
 import javax.media.opengl.*;
@@ -85,6 +79,10 @@ public class MainGui extends JFrame{
 	private JToolBar createTool(){
 		JToolBar tb = new JToolBar();
 		tb.setBackground(new Color(255, 215, 0));
+		final boolean testMode = ctrl.isTestMode();
+		if (testMode) {
+      ctrl.connect2Serial(testMode);
+		}
 		//tb.setBorder(BorderFactory.createLoweredBevelBorder());
 		
 		//select serial port
@@ -103,7 +101,7 @@ public class MainGui extends JFrame{
 	    	public void actionPerformed(ActionEvent event) {
 	    		if(selectedPortName != null){
 					setPrompt(selectedPortName);
-					ctrl.connect2Serial();
+					ctrl.connect2Serial(testMode);
 				}
             }
         });
@@ -198,6 +196,7 @@ public class MainGui extends JFrame{
 		patternPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "2D Pattern"));
 		
 		GLCapabilities capabilities = new GLCapabilities();
+		if (!this.ctrl.isTestMode()) {
         capabilities.setHardwareAccelerated(true); //We want hardware acceleration
         capabilities.setDoubleBuffered(true);      //And double buffer
         
@@ -212,6 +211,7 @@ public class MainGui extends JFrame{
         if(isDebug) System.out.println("The end of creatCanvas2D()");
         
         patternPanel.add(canvas, BorderLayout.CENTER);
+		}
 		return patternPanel;
 	}
 	
@@ -221,6 +221,7 @@ public class MainGui extends JFrame{
 		gamePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "3D Form Explorer"));
 		
 		GLCapabilities capabilities = new GLCapabilities();
+    if (!this.ctrl.isTestMode()) {
         capabilities.setHardwareAccelerated(true); //We want hardware acceleration
         capabilities.setDoubleBuffered(true);      //And double buffer
         
@@ -235,6 +236,7 @@ public class MainGui extends JFrame{
         if(isDebug) System.out.println("The end of creatCanvas3D()");
         
         gamePanel.add(canvas, BorderLayout.CENTER);
+    }
 		return gamePanel;
 	}
 	

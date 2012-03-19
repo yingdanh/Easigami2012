@@ -1,16 +1,9 @@
 package mainpack;
 
-import java.io.IOException;
-
-import javax.comm.NoSuchPortException;
-import javax.comm.PortInUseException;
-import javax.comm.UnsupportedCommOperationException;
 import javax.swing.UIManager;
 
 public class MainDriver {
-	public static void main(String[] args) 
-		throws IOException, NoSuchPortException, PortInUseException,
-			UnsupportedCommOperationException{
+	public static void main(String[] args) {
 		System.out.println("Easigami.");
 		try {
 			   //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel" );
@@ -18,8 +11,9 @@ public class MainDriver {
 
 			}
 		catch (Exception e) { }
+		boolean testMode = args.length > 0 && args[0].equals("test");
 
-		MainController application = new MainController();
+		MainController application = new MainController(testMode);
 		//application.communicate();
 	}
 
