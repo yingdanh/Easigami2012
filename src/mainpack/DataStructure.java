@@ -365,6 +365,7 @@ public class DataStructure {
 		Vector<Vector<Integer>> cycles = this.findCyclesVertex();
 		printAllCycles(cycles);
 		MatrixChains chains = getVertexChains(cycles);
+//		chains.chains = new MatrixChain[] {chains.chains[0]};
 		for (int i = 0; i < chains.getLength(); i++){
 			chains.chains[i].printChain();
 		}
@@ -382,26 +383,8 @@ public class DataStructure {
 					angles[da.edgeindex] = origAngle;
 				}
 			}
-			chains.chains[i].printChain();
 		}
-		
-		System.out.println("f: " + Newton.f(chains, angles));
-		System.out.println();
-		
-		double dby1 = Newton.dfby(chains, angles, 0);
-		System.out.println("dby1: " + dby1);
-		
-		System.out.println("numDiff: " + Newton.numDiff(chains, angles, 0, 1e-6));
-		System.out.println();
-		
-		double dby11 = Newton.df2by(chains, angles, 0, 0);
-		System.out.println("dby11: " + dby11);
-		
-		System.out.println("numDiff: " + Newton.numDiff(chains, angles, 0, 0, 1e-5));
-		for (int i = 0; i < 50; ++ i) {
-			boolean printStep = ((i + 1)%24) == 0;
-			angles = Newton.nstep(chains, angles, printStep);
-		}
+		angles = Newton.runNewton(chains, angles);
 	}
 	
 	public MatrixChains getVertexChains(Vector<Vector<Integer>> cycles){

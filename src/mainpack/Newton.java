@@ -20,7 +20,7 @@ public class Newton {
 		System.out.println(f(chain, angles));
 		System.out.println();
 		
-		double dby1 = dfby(chain, angles, 0);
+		DenseMatrix64F dby1 = get1d(chain, angles);
 		System.out.println(dby1);
 		
 		System.out.println(numDiff(chain, angles, 0, 1e-6));
@@ -111,6 +111,30 @@ public class Newton {
 		return togo;
 	}
 	
+  public static double[] runNewton(MatrixChains chains, double[] angles) {
+    System.out.println("f: " + Newton.f(chains, angles));
+    System.out.println();
+
+    DenseMatrix64F dby1 = Newton.get1d(chains, angles);
+    System.out.println("dby1: " + dby1);
+
+    System.out.println("numDiff: " + Newton.numDiff1d(chains, angles, 1e-6));
+    System.out.println();
+
+    DenseMatrix64F dby11 = Newton.get2d(chains, angles);
+    System.out.println("dby11: " + dby11);
+
+    System.out.println("numDiff: " + Newton.numDiff2d(chains, angles, 1e-5));
+    for (int i = 0; i < 10; ++i) {
+      boolean printStep = true; //((i + 1) % 24) == 0;
+      if (printStep) {
+        System.out.println("Step " + i);
+      }
+      angles = Newton.nstep(chains, angles, printStep);
+    }
+    return angles;
+  }
+	
 	public static double[] nstep(MatrixChains chain, double[] angles, boolean printStep) {
 		double[] newAng = NiuDunLaFuSunStep(chain, angles, printStep);
 		if (printStep) {
@@ -143,6 +167,11 @@ public class Newton {
 		DenseMatrix64F propose = vector(l);
 
 		boolean solved = CommonOps.solve(J, grad, propose);
+		for (int i = 0; i < l; ++ i) {
+		  if (Double.isNaN(propose.data[i])) {
+		    solved = false;
+		  }
+		}
 		 
 		if (!solved) {
 			throw new RuntimeException("Failed to solve update equation");
@@ -205,7 +234,7 @@ public class Newton {
 		}
 		double descent = dot(grad.data, propose.data);
 		if (descent > 0) {
-			//throw new RuntimeException("Non-reducing gradient direction with slope " + descent);
+			throw new RuntimeException("Non-reducing gradient direction with slope " + descent);
 		}
 		double oldF = f(chain, angles);
 		double newF = f(chain, newAng);
@@ -216,11 +245,11 @@ public class Newton {
 		DenseMatrix64F newGrad = get1d(chain, newAng);
 		// These would both be negative numbers reflecting correct gradient direction
 		double newDescent = dot(newGrad.data, propose.data);
-	//	if (newDescent < 0.9 * descent) {
-	//		System.out.println("Rejected failure of gradient reduce step from " + 
-	//	         descent + " to " + newDescent);
-	//		return false;
-	//	}
+		if (newDescent < 0.9 * descent) {
+			System.out.println("Rejected failure of gradient reduce step from " + 
+		         descent + " to " + newDescent);
+			return false;
+		}
 		
 		return true;
 	}
@@ -252,7 +281,7 @@ public class Newton {
 	public static double[] perturbAngles(double[] angles, int index, double epsilon) {
 		double[] newAngles = new double[angles.length];
 		for (int i = 0; i < angles.length; ++ i) {
-	        newAngles[i] = angles[i] + (i == index? epsilon : 0);
+		  newAngles[i] = angles[i] + (i == index? epsilon : 0);
 		}
 		return newAngles;
 	}
@@ -276,11 +305,32 @@ public class Newton {
 		return (f2 - f1) / (2 * epsilon);
 	}
 	
+  public static DenseMatrix64F numDiff1d(MatrixChains chains, double[] angles, double epsilon) {
+    DenseMatrix64F togo = vector(angles.length);
+    for (int i = 0; i < angles.length; ++i) {
+      togo.data[i] = numDiff(chains, angles, i, epsilon);
+    }
+    return togo;
+  }
+
+  public static DenseMatrix64F numDiff2d(MatrixChains chains, double[] angles, double epsilon) {
+    int l = angles.length;
+    DenseMatrix64F togo = new DenseMatrix64F(l, l);
+    for (int i = 0; i < l; ++i) {
+      for (int j = 0; j < l; ++j) {
+        togo.set(i, j, numDiff(chains, angles, i, j, epsilon));
+      }
+    }
+    return togo;
+  }
+
 	// construct the transformation matrix chain, possibly up to 2nd derivative order - set indices
 	// to -1 for unused derivative slots
 	public static double[][][] getMatrices(MatrixChain chain, double[] angles, int smashindex1, int smashindex2) {
 		int l = chain.matrices.length;
 		double[][][] mat = new double[l][][];
+		int smashed1 = smashindex1;
+		int smashed2 = smashindex2;
 		for (int i = 0; i < l; ++i) {
 			MatrixHolder hi = chain.matrices[i];
 			double[][] matrix = null;
@@ -290,9 +340,16 @@ public class Newton {
 				boolean smashoff = false;
 				double angle;
 				if (di == smashindex1 && di == smashindex2) {
+				  smashed1 = smashed2 = -1;
 					angle = -angles[di];
 					smashoff = true;
 				} else if (di == smashindex1 || di == smashindex2) {
+				  if (di == smashindex1) {
+				    smashed1 = -1;
+				  }
+				  else {
+				    smashed2 = -1;
+				  }
 					angle = Math.PI / 2.0 - angles[di];
 					smashoff = true;
 				} else {
@@ -308,6 +365,9 @@ public class Newton {
 				matrix = hi.matrix;
 			}
 			mat[i] = matrix;
+		}
+		if (smashed1 != -1 || smashed2 != -1) {
+		  mat[0] = VO3D.getZeroMatrix44();
 		}
 		return mat;
 	}
