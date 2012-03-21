@@ -25,6 +25,9 @@ public class AdjustAngles {
 		//double ao = Math.acos(1.0 / 3.0);
 		//double ao = Math.PI - Math.acos(-1.0 / 3.0);
 		double[] angles = new double[hingeVector.size()];
+		for (int i = 0; i < angles.length; ++ i) {
+			angles[i] = Double.NaN;
+		}
 		
 		Vector<Vector<Integer>> cycles = this.findCyclesVertex();
 		printAllCycles(cycles);
@@ -47,8 +50,17 @@ public class AdjustAngles {
 				}
 			}
 		}
-		angles = Newton.runNewton(chains, angles);
-		this.setAdjustedAngles2Hinges(angles);
+		boolean cycleCover = true;
+		for (int i = 0; i < angles.length; ++ i) {
+			if (Double.isNaN(angles[i])) {
+				cycleCover = false;
+				System.out.println("*@*@*@* Failure in cycle cover for shape - not running optimiser *@*@*@*@");
+			}
+		}
+		if (cycleCover) {
+		    angles = Newton.runNewton(chains, angles);
+		    this.setAdjustedAngles2Hinges(angles);
+		}
 	}
 
 

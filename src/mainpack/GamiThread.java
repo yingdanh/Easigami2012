@@ -20,7 +20,7 @@ public class GamiThread extends Thread {
 	private static final boolean isWritingFile = false; // true - write to a file
 	private String filename = "octahedron" + ".ezg";
 	private FileWrite fw;
-	private static final boolean isReadingFile = true;	//true - read a file
+	private static final boolean isReadingFile = false;	//true - read a file
 	private FileRead fr;
 	//private int eg = 0; 
 	//0-tetrahedron; 1-half dodecahedron; 2-cone with pentage as base; 3-truncated tetrahedron
@@ -124,7 +124,7 @@ public class GamiThread extends Thread {
 			//portOpen = false;
 			System.out.println("\n&&&&&& &&&&&& &&&&&&\n");
 			
-			break;
+			//break;
 		}
 		
 		//close the port while not running
