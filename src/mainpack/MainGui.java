@@ -66,9 +66,10 @@ public class MainGui extends JFrame{
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		
-		mainPanel.add(createTool(), BorderLayout.NORTH);
+		mainPanel.add(createTools(), BorderLayout.NORTH);
 		mainPanel.add(createCanvases(), BorderLayout.CENTER);
 		mainPanel.add(createPrompt(), BorderLayout.SOUTH);
+
 
 		if(isDebug) System.out.println("The end of creatMainPane()");
 		return mainPanel;
@@ -82,7 +83,19 @@ public class MainGui extends JFrame{
 		return prompt;
 	}
 	
-	private JToolBar createTool(){
+	private JComponent createTools(){
+		JPanel toolPanel = new JPanel();
+		toolPanel.setLayout(new GridLayout(1, 4));
+		
+		toolPanel.add(createInteractionTools());
+		toolPanel.add(createOperationTools());
+		toolPanel.add(createFileTools());
+		toolPanel.add(createMyTools());
+		
+		return toolPanel;
+	}
+	
+	private JComponent createInteractionTools(){
 		JToolBar tb = new JToolBar();
 		tb.setBackground(new Color(255, 215, 0));
 		//tb.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -123,6 +136,27 @@ public class MainGui extends JFrame{
             }
         });
 		
+		tb.add(serialPortsChoice);
+		tb.add(serialStartBtn);
+		tb.add(serialStopBtn);
+		populate();
+
+		return tb;
+	}
+	
+	private JComponent createOperationTools(){
+		JToolBar tb = new JToolBar();
+		tb.setBackground(new Color(255, 215, 0));
+		//tb.setBorder(BorderFactory.createLoweredBevelBorder());
+		
+		return tb;
+	}
+	
+	private JComponent createFileTools(){
+		JToolBar tb = new JToolBar();
+		tb.setBackground(new Color(255, 215, 0));
+		//tb.setBorder(BorderFactory.createLoweredBevelBorder());
+		
 		stlBtn = new JButton("STL");
 		stlBtn.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent event) {
@@ -133,6 +167,15 @@ public class MainGui extends JFrame{
 				}
             }
         });
+				
+		tb.add(stlBtn);
+		return tb;
+	}
+	
+	private JComponent createMyTools(){
+		JToolBar tb = new JToolBar();
+		tb.setBackground(new Color(255, 215, 0));
+		//tb.setBorder(BorderFactory.createLoweredBevelBorder());
 		
 		JButton monitorHingeBtn = new JButton("Monitor Hinges");
 		monitorHingeBtn.addActionListener(new ActionListener() {
@@ -142,13 +185,7 @@ public class MainGui extends JFrame{
             }
         });
 		
-		tb.add(serialPortsChoice);
-		tb.add(serialStartBtn);
-		tb.add(serialStopBtn);
-		tb.add(stlBtn);
 		tb.add(monitorHingeBtn);
-		populate();
-		
 		return tb;
 	}
 	

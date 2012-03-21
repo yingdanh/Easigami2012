@@ -7,37 +7,7 @@ import org.ejml.ops.CommonOps;
 
 import mygeom.VO3D;
 
-public class Newton {
-	public static void main(String[] args) {
-		//MatrixChains chain = getTetrahedralVertexChain();
-		//double angle1 = Math.acos(1.0/3.0);
-		//double angle1 = Math.PI/4;
-		//double [] angles = {0.8, 2.0, 1.0};
-		double ao = Math.PI - Math.acos(1.0 / 3.0) + 0.1;
-		double[] angles = {ao, ao, ao, ao,  ao, ao, ao, ao, ao, ao, ao, ao};
-		MatrixChains chain = getOctahedralVertexChain();
-		
-		System.out.println(f(chain, angles));
-		System.out.println();
-		
-		double dby1 = dfby(chain, angles, 0);
-		System.out.println(dby1);
-		
-		System.out.println(numDiff(chain, angles, 0, 1e-6));
-		System.out.println();
-		
-		double dby11 = df2by(chain, angles, 0, 0);
-		System.out.println(dby11);
-		
-		System.out.println(numDiff(chain, angles, 0, 0, 1e-5));
-		for (int i = 0; i < 100; ++ i) {
-			//boolean printStep = ((i + 1)%100) == 0;
-			boolean printStep = true;
-			
-			angles = nstep(chain, angles, printStep);
-		}
-	}
-	
+public class Newton {	
 	public static MatrixChains getTetrahedralVertexChain() {
 		MatrixChain togo = new MatrixChain(6);
 		togo.matrices[0] = new DihedralAngle(0);
@@ -49,59 +19,6 @@ public class Newton {
 		return togo2;
 	}
 	
-	public static MatrixChains getOctahedralVertexChain() {
-		MatrixHolder yRm = new YRotation(-Math.PI/3);
-		MatrixHolder yRp = new YRotation(Math.PI/3);
-		MatrixHolder T = new XZTranslation(Math.PI/3);
-		
-		MatrixChain chain1 = new MatrixChain (
-				new MatrixHolder[] {
-				new DihedralAngle(0),
-				yRm, new DihedralAngle(1),
-				T, yRp,	new DihedralAngle(5),
-				T, yRp,	new DihedralAngle(9),
-				yRm, new DihedralAngle(8),
-				yRm, new DihedralAngle(10),
-				T, yRp, new DihedralAngle(6),
-				T, yRp, new DihedralAngle(2),
-				yRm
-		});
-		MatrixChain chain2 = new MatrixChain (
-				new MatrixHolder[] {
-						new DihedralAngle(2),
-						yRm, new DihedralAngle(5),
-						yRm, new DihedralAngle(7),
-						yRm, new DihedralAngle(6),
-						yRm
-				});
-		MatrixChain chain3 = new MatrixChain (
-				new MatrixHolder[] {
-						new DihedralAngle(0),
-						yRm, new DihedralAngle(1),
-						yRm, new DihedralAngle(2),
-						yRm, new DihedralAngle(3),
-						yRm
-				});
-		MatrixChain chain4 = new MatrixChain (
-				new MatrixHolder[] {
-						new DihedralAngle(1),
-						yRm, new DihedralAngle(7),
-						yRm, new DihedralAngle(8),
-						yRm, new DihedralAngle(4),
-						yRm
-				});
-		MatrixChain chain5 = new MatrixChain (
-				new MatrixHolder[] {
-						new DihedralAngle(11),
-						yRm, new DihedralAngle(10),
-						yRm, new DihedralAngle(9),
-						yRm, new DihedralAngle(8),
-						yRm
-				});
-		MatrixChains togo2 = new MatrixChains(new MatrixChain[] {chain1, chain2, chain3, chain4, chain5});
-		return togo2;
-	}
-		
 	public static String printVec(double[] vec) {
 		String togo = "";
 		for (int i = 0; i < vec.length - 1; ++ i) {
@@ -116,7 +33,7 @@ public class Newton {
 		if (printStep) {
 			System.out.println("Stepped to " + printVec(newAng));
 
-			System.out.println(f(chain, newAng));
+			System.out.println("f: " + f(chain, newAng));
 			System.out.println();
 		}
 		return newAng;

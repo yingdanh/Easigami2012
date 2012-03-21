@@ -77,7 +77,7 @@ public class MainController {
 	}
 	
 	public void generateSTL() throws Exception{
-		Vector<Polygon> polygons = ds.getPolygonVetor();
+		Vector<Polygon> polygons = ds.getPolygonVector();
 		Polygon poly;
 		writeSTL stlw = null;
 
@@ -85,18 +85,19 @@ public class MainController {
 		for(int i=0; i<polygons.size(); i++){//for each polygon
 			System.out.println("calculateAbsVertices");
 			poly = polygons.get(i);
-			System.out.println(Integer.toHexString(poly.getAddress()));
+			System.out.println("0x" + Integer.toHexString(poly.getAddress()));
 			VO3D.printMatrix16(poly.getMatrix3D());
 			poly.calculateAbsVertices();
 		}
 		
+		//print out polygon info
 		for(int i=0; i<polygons.size(); i++){
 			poly = polygons.get(i);
 			System.out.println(poly);
 		}
 		
 		try {
-			stlw = new writeSTL("mySTL_truncatedTetrahedron2.stl", polygons);
+			stlw = new writeSTL("mySTL_test_12.stl", polygons);
 			stlw.generateSTL();
 			stlw.close();
 		} catch (IOException e) {

@@ -18,7 +18,7 @@ public class Hinge {
 	private Point3D cen;
 	private double angle;
 	private boolean isVisited;
-	private boolean isAdjusted;
+	//private boolean isAdjusted;
 
 	// constructor
 	public Hinge(int address) {
@@ -26,12 +26,12 @@ public class Hinge {
 		cen = new Point3D(); // init the center of the hinge as (0, 0, 0)
 		angle = 0.0;
 		isVisited = false;
-		isAdjusted = false;
+		//isAdjusted = false;
 	}
 
-	public boolean isAdjusted() {
+	/*public boolean isAdjusted() {
 		return this.isAdjusted;
-	}
+	}*/
 
 	public void setVisited(boolean b) {
 		this.isVisited = b;
@@ -156,9 +156,8 @@ public class Hinge {
 		rightAngle = rightPotAdjusted / 255.0 * 220;
 		return leftAngle + rightAngle;
 	}
-
-	// get the angle based on the 2 potentiometers
-	public double getAngle(boolean isConfigured) {
+	
+	public double getRawAngleFromPot(){
 		double leftAngle, rightAngle;
 		double bia = 255.0/220.0*20;
 		double leftPotAdjusted = leftPot, rightPotAdjusted = rightPot;
@@ -181,18 +180,20 @@ public class Hinge {
 			rightPotAdjusted -= bia;
 		}
 
-		if (!isConfigured || !isAdjusted) {
-			leftAngle = leftPotAdjusted / 255.0 * 220; // degree, 0-20, 20-235, 235-255
-			rightAngle = rightPotAdjusted / 255.0 * 220;
-			return Math.toRadians(leftAngle + rightAngle);
-		} else {
-			return angle;
-		}
+		leftAngle = leftPotAdjusted / 255.0 * 220; // degree, 0-20, 20-235, 235-255
+		rightAngle = rightPotAdjusted / 255.0 * 220;
+		angle = Math.toRadians(leftAngle + rightAngle);
+			
+		return angle;
+	}
+
+	// get the angle based on the 2 potentiometers
+	public double getAngle() {
+		return angle;
 	}
 
 	public void setAngle(double ang) {
 		this.angle = ang;
-		isAdjusted = true;
 	}
 
 	public String getSide(Polygon p) {
