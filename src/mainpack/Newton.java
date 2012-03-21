@@ -132,6 +132,14 @@ public class Newton {
         System.out.println("Step " + i);
       }
       angles = Newton.nstep(chains, angles, printStep);
+      double nval = f(chains, angles);
+      if (printStep) {
+		System.out.println("f: " + nval);
+		System.out.println();
+      }
+      if (nval < 1e-20) {
+          break;
+      }
     }
     return angles;
   }
@@ -140,9 +148,6 @@ public class Newton {
 		double[] newAng = NiuDunLaFuSunStep(chain, angles, printStep);
 		if (printStep) {
 			System.out.println("Stepped to " + printVec(newAng));
-
-			System.out.println("f: " + f(chain, newAng));
-			System.out.println();
 		}
 		return newAng;
 	}

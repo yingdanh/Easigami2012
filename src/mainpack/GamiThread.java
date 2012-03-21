@@ -18,7 +18,7 @@ public class GamiThread extends Thread {
 	
 	// read an input file, instead of receiving data from Easigami
 	private static final boolean isWritingFile = false; // true - write to a file
-	private String filename = "octahedron_7pieces" + ".ezg";
+	private String filename = "octahedron" + ".ezg";
 	private FileWrite fw;
 	private static final boolean isReadingFile = true;	//true - read a file
 	private FileRead fr;

@@ -234,22 +234,27 @@ public class Pattern implements GLEventListener, MouseListener,
 				// At the same time, determine the hinge.
 				h = ds.findHinge(curp, prevp);
 				if (h == null) {
-					h = ds.findHinge(curp, bak);
-					
-					if(h != null){
-						prevp = ds.getConnectedPolygon(curp, h);
-					}else //h == null
-						System.out.println("can't find a hinge that the current polygon connects to.");
-						break;
+					for (int i = 0; i < bak.size(); i++) {
+						//System.out.println("i = " + i);
+						//check if cur is connected to some previous polygon
+						h = ds.findHinge(curp, bak.get(i));	
+						//System.out.println("h = " + h);
+						if (h != null) {
+							if (h.isLeftPolygon(curp))
+								prevp = h.getRightPolygon();
+							else if (h.isRightPolygon(curp))
+								prevp = h.getLeftPolygon();
+							break;
+						}
 					}
-				
-				if (isDebug) {
-					System.out.println("find a hinge: "
-							+ Integer.toString(h.getAddress(), 16));
-					System.out.println("prev: "
-							+ Integer.toString(prevp.getAddress(), 16));
-					System.out.println("curp: "
-							+ Integer.toString(curp.getAddress(), 16));
+					if (h == null){
+						System.out
+								.println("can't find a hinge that the current polygon connects to.");
+					}
+				}
+				if(isDebug){
+					System.out.println("find a hinge: " + Integer.toString(h.getAddress(), 16));
+					System.out.println("prev: " + Integer.toString(prevp.getAddress(), 16));
 				}
 				
 				p3d = prevp.getPolygon3D();
