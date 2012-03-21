@@ -2,6 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre6"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/ejml-0.18.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/googlecode/efficient-java-matrix-library/ejml/0.18/ejml-0.18.jar"/>
+	<classpathentry kind="var" path="M2_REPO/javax/comm/comm/2.0.3/comm-2.0.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/net/java/dev/jogl/jogl/1.1.1-rc6/jogl-1.1.1-rc6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/net/java/dev/gluegen/gluegen-rt/1.0b05/gluegen-rt-1.0b05.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

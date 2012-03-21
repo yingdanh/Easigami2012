@@ -18,7 +18,7 @@ public class DataStructure {
 	// private Vector<Hinge> danglingVector;
 	//private boolean isConfigured;
 	private boolean isReady;
-	private boolean isDebug = false;
+	private boolean isDebug = true;
 
 	public DataStructure() {
 		hingeVector = new Vector<Hinge>();
@@ -62,8 +62,21 @@ public class DataStructure {
 			 */
 		}
 
-		if (isDebug)
+		if (isDebug){
+			System.out.println("print all polygons");
+			for(int i=0; i<polygonVector.size(); i++){
+				System.out.println(Integer.toString(polygonVector.get(i).getAddress(), 16) + " ");
+			}
+			System.out.println();
+			
+			System.out.println("print all hinges");
+			for(int i=0; i<hingeVector.size(); i++){
+				System.out.println(Integer.toString(hingeVector.get(i).getAddress(), 16) + " ");
+			}
+			System.out.println();
+			
 			printAdjacencyMatrix(msize);
+		}
 	}
 
 	public void printAdjacencyMatrix(int msize) {

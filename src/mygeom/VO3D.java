@@ -141,6 +141,11 @@ public class VO3D extends Point3D {
 		return identity;
 	}
 
+	public static double[][] getZeroMatrix44() {
+		double[][] togo = new double[4][4];
+		return togo;
+	}
+
 	/*
 	 * Constructing a basis (4x4) from a single vector <Fundamentals of Computer
 	 * Graphics> - Peter Shirley, page 29
@@ -541,4 +546,5 @@ public class VO3D extends Point3D {
 			return "ON";
 		}
 	}
+
 }

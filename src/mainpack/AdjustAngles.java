@@ -20,55 +20,37 @@ public class AdjustAngles {
 		adjmat = ds.getAdjacentMatrix();
 	}
 
-	public void runNewton() {
-		System.out.println("in testNewton");
-		// double ao = Math.acos(1.0 / 3.0);
-		double ao = Math.PI - Math.acos(-1.0 / 3.0);
+	public void runNewton(){
+		System.out.println("in runNewton");
+		//double ao = Math.acos(1.0 / 3.0);
+		//double ao = Math.PI - Math.acos(-1.0 / 3.0);
 		double[] angles = new double[hingeVector.size()];
-
+		
 		Vector<Vector<Integer>> cycles = this.findCyclesVertex();
 		printAllCycles(cycles);
 		MatrixChains chains = getVertexChains(cycles);
-
-		for (int i = 0; i < chains.getLength(); i++) {
+		for (int i = 0; i < chains.getLength(); i++){
+			chains.chains[i].printChain();
+		}
+		
+		for (int i = 0; i < chains.getLength(); i++){
 			MatrixChain chain = chains.chains[i];
-			for (int j = 0; j < chain.matrices.length; ++j) {
+			for (int j = 0; j < chain.matrices.length; ++ j) {
 				MatrixHolder holder = chain.matrices[j];
 				if (holder instanceof DihedralAngle) {
 					DihedralAngle da = (DihedralAngle) holder;
-					double origAngle = da.sign * (Math.PI - da.angle);
+					double origAngle = da.sign *(Math.PI - da.angle);
 					if (origAngle < 0) {
 						origAngle += 2 * Math.PI;
 					}
 					angles[da.edgeindex] = origAngle;
 				}
 			}
-			// chains.chains[i].printChain();
 		}
-
-		System.out.println("f: " + Newton.f(chains, angles));
-		System.out.println();
-
-		double dby1 = Newton.dfby(chains, angles, 0);
-		System.out.println("dby1: " + dby1);
-
-		System.out.println("numDiff: "
-				+ Newton.numDiff(chains, angles, 0, 1e-6));
-		System.out.println();
-
-		double dby11 = Newton.df2by(chains, angles, 0, 0);
-		System.out.println("dby11: " + dby11);
-
-		System.out.println("numDiff: "
-				+ Newton.numDiff(chains, angles, 0, 0, 1e-5));
-		for (int i = 0; i < 50; ++i) {
-			boolean printStep = ((i + 1) % 24) == 0;
-			angles = Newton.nstep(chains, angles, printStep);
-		}
-		
-		//set adjusted angles back to hinges
+		angles = Newton.runNewton(chains, angles);
 		this.setAdjustedAngles2Hinges(angles);
 	}
+
 
 	public MatrixChains getVertexChains(Vector<Vector<Integer>> cycles) {
 		System.out.println("in getVertexChains");

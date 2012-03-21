@@ -2,11 +2,6 @@ package mainpack;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.comm.NoSuchPortException;
-import javax.comm.PortInUseException;
-import javax.comm.UnsupportedCommOperationException;
-
-//import rw.FileRead;
 import rw.FileRead;
 import rw.FileWrite;
 
@@ -23,7 +18,7 @@ public class GamiThread extends Thread {
 	
 	// read an input file, instead of receiving data from Easigami
 	private static final boolean isWritingFile = false; // true - write to a file
-	private String filename = "tetrahedron_03" + ".ezg";
+	private String filename = "octahedron_7pieces" + ".ezg";
 	private FileWrite fw;
 	private static final boolean isReadingFile = true;	//true - read a file
 	private FileRead fr;
@@ -32,7 +27,7 @@ public class GamiThread extends Thread {
 	private boolean isAdjusted = true;
 	
 	public GamiThread(MainController ctrl, DataStructure ds, CommPortModem modem){
-		super("Easigami 2011");
+		super("Easigami 2012");
 		this.ctrl = ctrl;
 		this.ds = ds;
 		portOpen = true;
@@ -116,13 +111,15 @@ public class GamiThread extends Thread {
 			ds.buildAdjacencyMatrix();
 			if(isAdjusted){
 				aa = new AdjustAngles(ds);
-				//aa.runNewton();
-				double a = Math.acos(1/3.0);
-				aa.setAdjustedAngles2Hinges(new double[]{a, a, a, a, a});
+				aa.runNewton();
+				//double a = Math.acos(1/3.0);
+				//aa.setAdjustedAngles2Hinges(new double[]{a, a, a, a, a});
 			}
 			ds.setReady(true);
-			ctrl.getRenderer().refresh();
-			ctrl.getPattern().refresh();
+			if (!ctrl.isTestMode()) {
+			    ctrl.getRenderer().refresh();
+			    ctrl.getPattern().refresh();
+			}
 			//ds.setReady(false);
 			//portOpen = false;
 			System.out.println("\n&&&&&& &&&&&& &&&&&&\n");

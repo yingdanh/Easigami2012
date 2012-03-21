@@ -2,14 +2,11 @@ package mainpack;
 
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Vector;
 
-import javax.comm.CommPortIdentifier;
 import javax.comm.NoSuchPortException;
 import javax.comm.PortInUseException;
 import javax.comm.UnsupportedCommOperationException;
-import javax.media.opengl.GL;
 
 import mygeom.VO3D;
 import rw.writeSTL;
@@ -26,8 +23,13 @@ public class MainController {
 	//private boolean isConnected;
 	private GamiThread gamithread = null;
 	private DataStructure ds;
+	private boolean testMode;
+	public boolean isTestMode() {
+	  return testMode;
+	}
 	
-	public MainController(){
+	public MainController(boolean testMode){
+	  this.testMode = testMode;
 		AddressBook lookup = AddressBook.createAddressBook(); //the pre-stored lookup table
 		
 		ds = new DataStructure();
@@ -40,8 +42,9 @@ public class MainController {
 	
 	//connect to the serial port that a user selected 
 	//start the thread to talk to the easigami TUI or read a file
-	public void connect2Serial() {
+	public void connect2Serial(boolean testMode) {
 		String portName;
+		if (!testMode) {
 		do {
 			portName = view.getSelectedName();
 			if (portName == null)
@@ -60,6 +63,7 @@ public class MainController {
 			e.printStackTrace();
 		} catch (UnsupportedCommOperationException e) {
 			e.printStackTrace();
+		}
 		}
 		
 		gamithread = new GamiThread(this, ds, modem);
