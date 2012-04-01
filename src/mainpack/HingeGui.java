@@ -48,7 +48,7 @@ public class HingeGui extends JFrame{
 			h = hs.get(i);
 			hingeInfo.setText("0x" + Integer.toString(h.getAddress(), 16) + "____" + 
 			h.getLeftPot() + "____" + h.getRightPot() + "____" + h.getAngleDeg() + 
-			"____" + h.getAngle(false) + "\n");
+			"____" + h.getRawAngleFromPot() + "\n");
 		}
 	}
 	

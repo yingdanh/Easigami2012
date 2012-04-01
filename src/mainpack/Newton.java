@@ -7,7 +7,7 @@ import org.ejml.ops.CommonOps;
 
 import mygeom.VO3D;
 
-public class Newton {
+public class Newton {	
 	public static void main(String[] args) {
 		//MatrixChains chain = getTetrahedralVertexChain();
 		//double angle1 = Math.acos(1.0/3.0);
@@ -37,7 +37,7 @@ public class Newton {
 			angles = nstep(chain, angles, printStep);
 		}
 	}
-	
+
 	public static MatrixChains getTetrahedralVertexChain() {
 		MatrixChain togo = new MatrixChain(6);
 		togo.matrices[0] = new DihedralAngle(0);
@@ -101,7 +101,8 @@ public class Newton {
 		MatrixChains togo2 = new MatrixChains(new MatrixChain[] {chain1, chain2, chain3, chain4, chain5});
 		return togo2;
 	}
-		
+
+	
 	public static String printVec(double[] vec) {
 		String togo = "";
 		for (int i = 0; i < vec.length - 1; ++ i) {
@@ -125,12 +126,20 @@ public class Newton {
     System.out.println("dby11: " + dby11);
 
     System.out.println("numDiff: " + Newton.numDiff2d(chains, angles, 1e-5));
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 15; ++i) {
       boolean printStep = true; //((i + 1) % 24) == 0;
       if (printStep) {
         System.out.println("Step " + i);
       }
       angles = Newton.nstep(chains, angles, printStep);
+      double nval = f(chains, angles);
+      if (printStep) {
+		System.out.println("f: " + nval);
+		System.out.println();
+      }
+      if (nval < 1e-20) {
+          break;
+      }
     }
     System.out.println(Newton.get2d(chains, angles));
     return angles;
@@ -140,9 +149,6 @@ public class Newton {
 		double[] newAng = NiuDunLaFuSunStep(chain, angles, printStep);
 		if (printStep) {
 			System.out.println("Stepped to " + printVec(newAng));
-
-			System.out.println(f(chain, newAng));
-			System.out.println();
 		}
 		return newAng;
 	}
@@ -159,6 +165,35 @@ public class Newton {
 		return togo;
 	}
 	
+	public static double[] tryProposal(MatrixChains chain, 
+			DenseMatrix64F propose, DenseMatrix64F grad,
+			double[] angles, boolean printStep) {
+		
+		int l = angles.length;
+		
+		DenseMatrix64F angv = vec(angles);
+
+		DenseMatrix64F newAng = vector(l);
+		CommonOps.add(angv, propose, newAng);
+		int i = 0;
+		for (i = 0; i < 10; ++ i) {
+		    boolean verify = verifyProposal(chain, angles, newAng.data, grad, propose);
+		    if (verify) {
+		    	break;
+		    }
+		    else {
+		    	CommonOps.scale(0.5, propose);
+		    	System.out.println("Halved proposal length to " + Math.sqrt(dot(propose.data, propose.data)));
+		    	System.out.println("New proposal " + propose);
+				CommonOps.add(angv, propose, newAng);
+		    }
+		}
+		if (i == 10) {
+			throw new RuntimeException("Failed to find acceptable step after 10 tries");
+		}
+		return newAng.data;
+	}
+	
 	public static double[] NiuDunLaFuSunStep(MatrixChains chain, double[] angles, boolean printStep) {
 		// see: http://code.google.com/p/efficient-java-matrix-library/wiki/SolvingLinearSystems
 		int l = angles.length;
@@ -173,7 +208,7 @@ public class Newton {
 		    solved = false;
 		  }
 		}
-		 
+		try {
 		if (!solved) {
 			throw new RuntimeException("Failed to solve update equation");
 		}
@@ -188,27 +223,16 @@ public class Newton {
 			double[] eigs = eigs(decomp);
 			System.out.println("Computed eigenvalues " + printVec(eigs));
 		}
-
-		DenseMatrix64F angv = vec(angles);
-
-		DenseMatrix64F newAng = vector(l);
-		CommonOps.add(angv, propose, newAng);
-		int i = 0;
-		for (i = 0; i < 10; ++ i) {
-		    boolean verify = verifyProposal(chain, angles, newAng.data, grad, propose);
-		    if (verify) {
-		    	break;
-		    }
-		    else {
-		    	CommonOps.scale(-0.5, propose);
-		    	System.out.println("Halved proposal length to " + Math.sqrt(dot(propose.data, propose.data)));
-				CommonOps.add(angv, propose, newAng);
-		    }
+		double[] newAngs = tryProposal(chain, propose, grad, angles, printStep);
+		return newAngs;
 		}
-		if (i == 10) {
-			throw new RuntimeException("Failed to find acceptable step after 10 tries");
+		catch (Exception e) {
+			System.out.println("Failed to find suitable proposal from Newton step - trying gradient step");
+			propose.set(grad);
+			CommonOps.scale(-1, propose);
+			double[] newAngs = tryProposal(chain, propose, grad, angles, printStep);
+			return newAngs;
 		}
-		return newAng.data;
 	};
 	
 	public static DenseMatrix64F vec(double[] vec) {
@@ -229,7 +253,7 @@ public class Newton {
 			double[] newAng, DenseMatrix64F grad, DenseMatrix64F propose) {
 		for (int i = 0; i < newAng.length; ++ i) {
 			if (newAng[i] <= 0 || newAng[i] >= 2 * Math.PI) {
-				System.out.println("Rejected out of range angle " + newAng[i] + " at index i");
+				System.out.println("Rejected out of range angle " + newAng[i] + " at index " + i);
 				return false;
 			}
 		}
@@ -246,7 +270,7 @@ public class Newton {
 		DenseMatrix64F newGrad = get1d(chain, newAng);
 		// These would both be negative numbers reflecting correct gradient direction
 		double newDescent = dot(newGrad.data, propose.data);
-		if (newDescent < 0.9 * descent) {
+		if (newDescent < 0.99 * descent) {
 			System.out.println("Rejected failure of gradient reduce step from " + 
 		         descent + " to " + newDescent);
 			return false;

@@ -178,7 +178,7 @@ public class Polygon {
 		//System.out.println("nnormal: " + nnormal);
 		for(int j=0; j<vs.length; j++){//for each vertex
 			np = VO3D.calPoint(this.getMatrix3D(), vs[j]);
-			//System.out.println("np: " + np);
+			System.out.println("np: " + np);
 			poly.setAbsVertexAt(j, np);
 		}
 	}

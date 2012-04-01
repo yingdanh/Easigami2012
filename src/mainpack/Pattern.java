@@ -170,10 +170,10 @@ public class Pattern implements GLEventListener, MouseListener,
 		double[][] T;			//translation matrix
 		double[][] ZRuvw;		//transpose matrix of new local coordinate system
 		double[][] M; 			//resultant matrix
-		float[] hfc = {0.0f, 0.0f, 1.0f}; //head polygon front color - red
-		float[] hbc = {1.0f, 0.0f, 0.0f}; //head polygon back color - blue
-		float[] fc = {0.9f, 0.9f, 0.9f};  //front color - green
-		float[] bc = {0.0f, 1.0f, 0.0f};  //back color - gray
+		float[] hbc = {0.0f, 0.0f, 1.0f}; //head polygon front color - red
+		float[] hfc = {1.0f, 0.0f, 0.0f}; //head polygon back color - blue
+		float[] bc = {0.9f, 0.9f, 0.9f};  //front color - green
+		float[] fc = {0.0f, 1.0f, 0.0f};  //back color - gray
 		
 		if(hvec.size() == 0)	//there should be >0 hinges
 			return;
@@ -212,10 +212,7 @@ public class Pattern implements GLEventListener, MouseListener,
 				if (h.isLeftPolygon(curp)) {
 					// get the current matrix on the MODELVIEW stack
 					gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, curmat3d, 0);
-					// print the current matrix
-					//System.out.println("Print current matrix");
-					//printMatrix(curmat);
-
+					
 					curp.setMatrixPattern(curmat3d);	// set matrix for cur
 					curp.setCoordsPolygon3D(h.getLeftPolygonIndex(), true); // set coordinates of the polygon
 					draw.drawPolygon(gl, curp, hfc, hbc);
@@ -224,9 +221,6 @@ public class Pattern implements GLEventListener, MouseListener,
 				} else if (h.isRightPolygon(curp)) {
 					// get the current matrix on the MODELVIEW stack
 					gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, curmat3d, 0);
-					// print the current matrix
-					//System.out.println("Print current matrix");
-					//printMatrix(curmat);
 
 					curp.setMatrixPattern(curmat3d);	// set matrix for cur
 					curp.setCoordsPolygon3D(h.getRightPolygonIndex(), false); // set coordinates of the polygon
@@ -240,8 +234,6 @@ public class Pattern implements GLEventListener, MouseListener,
 				// At the same time, determine the hinge.
 				h = ds.findHinge(curp, prevp);
 				if (h == null) {
-					//loop through all polygons that have been drawn
-					//in order to find a hinge that joins curp 
 					for (int i = 0; i < bak.size(); i++) {
 						//System.out.println("i = " + i);
 						//check if cur is connected to some previous polygon
@@ -255,14 +247,14 @@ public class Pattern implements GLEventListener, MouseListener,
 							break;
 						}
 					}
-				}
-				if (h == null){
-					System.out.println("can't find a hinge that the current polygon connects to.");
-					return;
+					if (h == null){
+						System.out
+								.println("can't find a hinge that the current polygon connects to.");
+					}
 				}
 				if(isDebug){
-					System.out.println("find a hinge: 0x" + Integer.toString(h.getAddress(), 16));
-					System.out.println("prev: 0x" + Integer.toString(prevp.getAddress(), 16));
+					System.out.println("find a hinge: " + Integer.toString(h.getAddress(), 16));
+					System.out.println("prev: " + Integer.toString(prevp.getAddress(), 16));
 				}
 				
 				p3d = prevp.getPolygon3D();
@@ -274,16 +266,7 @@ public class Pattern implements GLEventListener, MouseListener,
 					if(isDebug)System.out.println("check index: "+h.getRightPolygonIndex());
 					opp = prevp.setCoordsOpp3D(h.getRightPolygonIndex(), false); //p3d.getVertices()[(h.getRightPolygonIndex() + 1) % p3d.getN()];
 					cen = VO3D.middlePoint(edge);
-					curp.setCoordsPolygon3D(h.getLeftPolygonIndex(), true); // set coordinates of the polygon
-
-					// calculate the axis
-					if(VO3D.adjustAxis(opp, false)){
-						axis = VO3D.diff_vector(edge.getP2(), edge.getP1());
-					}else{
-						axis = VO3D.diff_vector(edge.getP1(), edge.getP2());
-					}
-					//axis = new Point3D(-50, 0, 50);
-					
+					curp.setCoordsPolygon3D(h.getLeftPolygonIndex(), true); // set coordinates of the polygon			
 				} else {//h.isRightPolygon(curp)
 					if(isDebug)System.out.println("Draw the right polygon");
 
@@ -291,32 +274,33 @@ public class Pattern implements GLEventListener, MouseListener,
 					opp = prevp.setCoordsOpp3D(h.getLeftPolygonIndex(), true); //p3d.getVertices()[(h.getLeftPolygonIndex() + 1) % p3d.getN()];
 					cen = VO3D.middlePoint(edge);
 					curp.setCoordsPolygon3D(h.getRightPolygonIndex(), false); // set coordinates of the polygon
-					
-					// calculate the new axis
-					if(VO3D.adjustAxis(opp, false)){
-						axis = VO3D.diff_vector(edge.getP2(), edge.getP1());
-					}else{
-						axis = VO3D.diff_vector(edge.getP1(), edge.getP2());
-					}
 				}	
+				
+				// calculate the axis
+				if(VO3D.adjustAxis(opp, false)){
+					axis = VO3D.diff_vector(edge.getP2(), edge.getP1());
+				}else{
+					axis = VO3D.diff_vector(edge.getP1(), edge.getP2());
+				}
+				
+				// calculate the new coordinates
+				T = VO3D.getMatrix_translation(cen.getX(), cen.getY(), cen.getZ());	
+				// use axis as new z axis, and calculate the new local coordinate system
+				ZRuvw = VO3D.formLocalCoordinates3D(axis, 0);
+				M = VO3D.matrixMultiply(T, ZRuvw);
 				
 				// load the previous matrix
 				gl.glLoadMatrixd(prevp.getMatrixPattern(), 0); // load matrix saved for prev
 				//System.out.println("Print previous matrix");
 				//printMatrix(prevp.getMatrix());
 			
-				// calculate the new coordinates
-				T = VO3D.getMatrix_translation(cen.getX(), cen.getY(), cen.getZ());	
-				// use axis as new z axis, and calculate the new local coordinate system
-				ZRuvw = VO3D.formLocalCoordinates3D(axis, 0);
-				M = VO3D.matrixMultiply(T, ZRuvw);
 				if(isDebug){
 					System.out.println("left polygon index: " + h.getLeftPolygonIndex());
 					System.out.println("right polygon index: " + h.getRightPolygonIndex());
 					System.out.println("edge: " + edge.getP1() + ", " + edge.getP2());
 					System.out.println("opp: " + (h.getLeftPolygonIndex() + 1) % p3d.getN());
 					System.out.println("cen: " + cen);
-					System.out.println("Hinge angle: " + h.getAngle(ds.isConfigured()));
+					System.out.println("Hinge angle: " + h.getAngle());
 					System.out.println("Axis: " + axis);
 					System.out.println("T: ");
 					VO3D.printMatrix44(T);

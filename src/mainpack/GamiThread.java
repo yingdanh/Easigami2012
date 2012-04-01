@@ -12,14 +12,15 @@ public class GamiThread extends Thread {
 	private CommPortModem modem;
 	private MainController ctrl;
 	private DataStructure ds;
+	private AdjustAngles aa;
 	private boolean portOpen;
 	private boolean isDebug = false;
 	
 	// read an input file, instead of receiving data from Easigami
 	private static final boolean isWritingFile = false; // true - write to a file
-	private String filename = "octahedron_7pieces" + ".ezg";
+	private String filename = "octahedron" + ".ezg";
 	private FileWrite fw;
-	private static final boolean isReadingFile = true;	//true - read a file
+	private static final boolean isReadingFile = false;	//true - read a file
 	private FileRead fr;
 	//private int eg = 0; 
 	//0-tetrahedron; 1-half dodecahedron; 2-cone with pentage as base; 3-truncated tetrahedron
@@ -109,10 +110,10 @@ public class GamiThread extends Thread {
 			//System.out.println("Build the Adjacency Matrix.");
 			ds.buildAdjacencyMatrix();
 			if(isAdjusted){
-				//ds.advantagedConfigure();
-				//ds.setConfigured(true);
-				ds.testNewton();
-				//ds.findCyclesVertex();
+				aa = new AdjustAngles(ds);
+				aa.runNewton();
+				//double a = Math.acos(1/3.0);
+				//aa.setAdjustedAngles2Hinges(new double[]{a, a, a, a, a});
 			}
 			ds.setReady(true);
 			if (!ctrl.isTestMode()) {
@@ -123,7 +124,7 @@ public class GamiThread extends Thread {
 			//portOpen = false;
 			System.out.println("\n&&&&&& &&&&&& &&&&&&\n");
 			
-			break;
+			//break;
 		}
 		
 		//close the port while not running
@@ -160,7 +161,7 @@ public class GamiThread extends Thread {
 				if(isDebug) System.out.println("Pot2: " + response);
 				if(isWritingFile)fw.write2file(Integer.toString(response, 10) + "\n");
 				h.setRightPot(response);
-				if(isDebug) System.out.println("The angle of the hinge: " + h.getAngle(false));
+				if(isDebug) System.out.println("The angle of the hinge: " + h.getRawAngleFromPot());
 					
 				//add a hinge to DS
 				ds.add2HingeVector(h);
@@ -226,8 +227,8 @@ public class GamiThread extends Thread {
 			
 			// loop through all valid polygons for the left wing
 			if(isDebug)System.out.println("loop through all valid polygons for the left wing...");
-			for(int j=0; j<ds.getPolygonVetor().size(); j++){//inner loop: go through the polygon vector
-				p = ds.getPolygonVetor().get(j);
+			for(int j=0; j<ds.getPolygonVector().size(); j++){//inner loop: go through the polygon vector
+				p = ds.getPolygonVector().get(j);
 				
 				response = modem.receive();
 				if(response == p.getAddress()){
@@ -249,8 +250,8 @@ public class GamiThread extends Thread {
 			
 			// loop through all valid polygons for the right wing
 			if(isDebug) System.out.println("loop through all valid polygons for the right wing...");
-			for(int j=0; j<ds.getPolygonVetor().size(); j++){
-				p = ds.getPolygonVetor().get(j);
+			for(int j=0; j<ds.getPolygonVector().size(); j++){
+				p = ds.getPolygonVector().get(j);
 				
 				response = modem.receive();
 				if(response == p.getAddress()){
