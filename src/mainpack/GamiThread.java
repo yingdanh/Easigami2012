@@ -18,9 +18,10 @@ public class GamiThread extends Thread {
 	
 	// read an input file, instead of receiving data from Easigami
 	private static final boolean isWritingFile = false; // true - write to a file
-	private String filename = "octahedron" + ".ezg";
+	// "octahedron.ezg"
+	private String filename = "4triangles_flat.ezg";
 	private FileWrite fw;
-	private static final boolean isReadingFile = false;	//true - read a file
+	private boolean isReadingFile = false;	//true - read a file
 	private FileRead fr;
 	//private int eg = 0; 
 	//0-tetrahedron; 1-half dodecahedron; 2-cone with pentage as base; 3-truncated tetrahedron
@@ -31,6 +32,7 @@ public class GamiThread extends Thread {
 		this.ctrl = ctrl;
 		this.ds = ds;
 		portOpen = true;
+		isReadingFile = ctrl.isTestMode();
 		
 		if(isReadingFile){
 			try {
@@ -123,6 +125,9 @@ public class GamiThread extends Thread {
 			//ds.setReady(false);
 			//portOpen = false;
 			System.out.println("\n&&&&&& &&&&&& &&&&&&\n");
+			if (isReadingFile) {
+			   System.exit(0);
+			}
 			
 			//break;
 		}

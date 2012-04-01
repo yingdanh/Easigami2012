@@ -58,8 +58,8 @@ public class AdjustAngles {
 			}
 		}
 		if (cycleCover) {
-		    angles = Newton.runNewton(chains, angles);
-		    this.setAdjustedAngles2Hinges(angles);
+		    OptimisationReport report = Newton.runNewton(chains, angles);
+		    this.setAdjustedAngles2Hinges(report.angles);
 		}
 	}
 
