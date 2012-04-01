@@ -132,6 +132,7 @@ public class Newton {
       }
       angles = Newton.nstep(chains, angles, printStep);
     }
+    System.out.println(Newton.get2d(chains, angles));
     return angles;
   }
 	
