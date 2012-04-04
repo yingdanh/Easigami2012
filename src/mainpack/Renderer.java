@@ -44,7 +44,7 @@ public class Renderer implements GLEventListener, MouseListener,
 	private boolean doneBFS;
 	private int mode = GL.GL_RENDER;
 
-	private final boolean isDebug = true;
+	private final boolean isDebug = false;
 	private Date timeStamp;
 
 	public Renderer(GLCanvas canvas, MainController ctrl) {

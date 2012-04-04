@@ -18,9 +18,9 @@ public class GamiThread extends Thread {
 	
 	// read an input file, instead of receiving data from Easigami
 	private static final boolean isWritingFile = false; // true - write to a file
-	private String filename = "octahedron" + ".ezg";
+	private String filename = "tui/4triangles_flat" + ".ezg";
 	private FileWrite fw;
-	private static final boolean isReadingFile = false;	//true - read a file
+	private static final boolean isReadingFile = true;	//true - read a file
 	private FileRead fr;
 	//private int eg = 0; 
 	//0-tetrahedron; 1-half dodecahedron; 2-cone with pentage as base; 3-truncated tetrahedron
@@ -104,7 +104,9 @@ public class GamiThread extends Thread {
 		
 			if(isWritingFile)
 				ds.printVectors(isWritingFile, fw);
-			if(isWritingFile)fw.close();
+			if(isWritingFile){
+				fw.close();
+			}
 			if(isReadingFile)fr.close();
 		
 			//System.out.println("Build the Adjacency Matrix.");

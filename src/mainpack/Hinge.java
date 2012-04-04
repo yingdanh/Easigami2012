@@ -18,7 +18,7 @@ public class Hinge {
 	private Point3D cen;
 	private double angle;
 	private boolean isVisited;
-	//private boolean isAdjusted;
+	private boolean isAdjusted;
 
 	// constructor
 	public Hinge(int address) {
@@ -26,7 +26,7 @@ public class Hinge {
 		cen = new Point3D(); // init the center of the hinge as (0, 0, 0)
 		angle = 0.0;
 		isVisited = false;
-		//isAdjusted = false;
+		isAdjusted = false;
 	}
 
 	/*public boolean isAdjusted() {
@@ -189,10 +189,14 @@ public class Hinge {
 
 	// get the angle based on the 2 potentiometers
 	public double getAngle() {
-		return angle;
+		if(isAdjusted)
+			return angle;
+		else
+			return this.getRawAngleFromPot();
 	}
 
 	public void setAngle(double ang) {
+		this.isAdjusted = true;
 		this.angle = ang;
 	}
 
