@@ -149,96 +149,123 @@ public class Pattern implements GLEventListener, MouseListener,
 		// glutSwapBuffers();
 	}
 	
-	public void BFS(GL gl){
-		if(isDebug) System.out.println("Renderer::BFS");
-		
-		MyQueue<Polygon> queue = new MyQueue<Polygon>(); 	// queue for BFS
-		double nextmat3d[] = new double[16];				// 4x4 matrix represented as 16x1 matrix
+	public void BFS(GL gl) {
+		if (isDebug)
+			System.out.println("Renderer::firstBFS");
+
+		MyQueue<Polygon> queue = new MyQueue<Polygon>(); // queue for BFS
+		double startmat3d[] = new double[16];
+		double nextmat3d[] = new double[16]; // 4x4 matrix represented as 16x1
+		// matrix
 		Vector<Hinge> hvec = ds.getHingeVector();
-		Vector<Polygon> bak = new Vector<Polygon>();//processed polygons to find the next hinge
-		Vector<Polygon> pvec; 	//adjacent neighbors to each polygon
+		Vector<Polygon> bak = new Vector<Polygon>();// processed polygons to
+		// find the next hinge
+		Vector<Polygon> pvec; // adjacent neighbors to each polygon
 		Hinge h = null;
-		Polygon phead;			//the 1st Polygon
-		Polygon curp;           //the polygon under processing in BFS
-		Polygon prevp=null;     //the previous polygon processed in BFS
-		Polygon p;              //variable for finding the neighbors of a Polygon
+		Polygon phead; // the 1st Polygon
+		Polygon curp; // the polygon under processing in BFS
+		Polygon prevp = null; // the previous polygon processed in BFS
+		Polygon p; // variable for finding the neighbors of a Polygon
 		Polygon3D p3d;
-		Line3D edge;			// the edge that the hinge connects to the prev
-		Point3D opp; 			// the point that is opposite to the connected edge
-		Point3D cen;			// hinge location
-		Point3D axis;			// hinge axis
-		double[][] T;			//translation matrix
-		double[][] ZRuvw;		//transpose matrix of new local coordinate system
-		double[][] M; 			//resultant matrix
-		float[] hbc = {0.0f, 0.0f, 1.0f}; //head polygon front color - red
-		float[] hfc = {1.0f, 0.0f, 0.0f}; //head polygon back color - blue
-		float[] bc = {0.9f, 0.9f, 0.9f};  //front color - green
-		float[] fc = {0.0f, 1.0f, 0.0f};  //back color - gray
-		
-		if(hvec.size() == 0)	//there should be >0 hinges
+		Line3D edge; // the edge that the hinge connects to the prev
+		Point3D opp; // the point that is opposite to the connected edge
+		Point3D cen; // hinge location
+		Point3D axis; // hinge axis
+		double[][] T; // translation matrix
+		double[][] ZRuvw; // transpose matrix of new local coordinate system
+		double[][] M; // resultant matrix
+		float[] hfc = { 0.0f, 0.0f, 1.0f }; // blue
+		float[] hbc = { 1.0f, 0.0f, 0.0f }; // red
+		float[] fc = { 0.7f, 0.7f, 0.7f }; // gray
+		float[] bc = { 0.0f, 1.0f, 0.0f }; // green
+		// double h1 = 10/2*Math.tan(Math.toRadians(54));
+		// double h2 = Math.sqrt(3.0/4.0*100-Math.pow(h1, 2));
+		// Point3D cone_center = null;
+
+		if (hvec.size() == 0) // there should be >0 hinges
 			return;
-		
+
 		// find the 1st hinge
 		h = hvec.get(0);
-		if(isDebug)
-			System.out.println("BFS: 1st hinge " + "0x" + Integer.toString(h.getAddress(), 16));
-		draw.drawHinge(gl, glu, h.getColor()); // draw the 1st hinge
-		
+		if (isDebug)
+			System.out.println("BFS: 1st hinge " + "0x"
+					+ Integer.toString(h.getAddress(), 16));
+		// draw.drawHinge(gl, glu, h.getColor()); // draw the 1st hinge
+
 		// find the 1st polygon
 		phead = h.getLeftPolygon();
 		if (phead == null)
 			phead = h.getRightPolygon();
-		if (phead == null){
-			System.out.println("there is no polygon connected to either side of the head hinge");
+		if (phead == null) {
+			System.out
+					.println("there is no polygon connected to either side of the head hinge");
 			return;
-		}				
-		if(isDebug)
-			System.out.println("1st polygon 0x" + Integer.toString(phead.getAddress(), 16));
-		
-		// enqueue the starting node and set it as visited
+		}
+		if (isDebug)
+			System.out.println("1st polygon " + "0x"
+					+ Integer.toString(phead.getAddress(), 16));
+
+		// enqueue the starting node
 		queue.enqueue(phead);
 		phead.setVisited(true);
-		
+
 		while (!queue.isEmpty()) {
-			if(isDebug)System.out.println("enter into one iteration: ");
+			if (isDebug)
+				System.out.println("enter into one iteration: ");
 			curp = queue.dequeue();
-			if(isDebug)
-				System.out.println("dequeue 0x" + Integer.toString(curp.getAddress(), 16));
-			
+			if (isDebug)
+				System.out.println("dequeue "
+						+ Integer.toString(curp.getAddress(), 16));
+
 			// process the current node
 			// draw the current polygon
 			if (curp.getAddress() == phead.getAddress()) {// the first polygon
-				if(isDebug) System.out.println("Draw the first polygon");
+				if (isDebug)
+					System.out.println("Draw the first polygon");
 				if (h.isLeftPolygon(curp)) {
 					// get the current matrix on the MODELVIEW stack
-					gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, curmat3d, 0);
-					
-					curp.setMatrixPattern(curmat3d);	// set matrix for cur
-					curp.setCoordsPolygon3D(h.getLeftPolygonIndex(), true); // set coordinates of the polygon
+					gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, startmat3d, 0);
+
+					// set matrix for cur
+					curp.setMatrix3D(VO3D.getIdentityMatrix());
+					// set coordinates of the polygon
+					curp.setCoordsPolygon3D(h.getLeftPolygonIndex(), true);
 					draw.drawPolygon(gl, curp, hfc, hbc);
 					bak.add(curp);
-					if(isDebug)System.out.println("Draw the left polygon");
+					if (isDebug)
+						System.out.println("Drew the left polygon");
+					// cone_center = new Point3D(-h1, -h2, 0);
+					// if(curp.isSelected())
+					// draw.drawCone(gl, curp, cone_center);
 				} else if (h.isRightPolygon(curp)) {
 					// get the current matrix on the MODELVIEW stack
-					gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, curmat3d, 0);
+					gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, startmat3d, 0);
 
-					curp.setMatrixPattern(curmat3d);	// set matrix for cur
-					curp.setCoordsPolygon3D(h.getRightPolygonIndex(), false); // set coordinates of the polygon
+					// set matrix for cur
+					curp.setMatrix3D(VO3D.getIdentityMatrix());
+					// set coordinates of the polygon
+					curp.setCoordsPolygon3D(h.getRightPolygonIndex(), false);
 					draw.drawPolygon(gl, curp, hfc, hbc);
 					bak.add(curp);
-					if(isDebug) System.out.println("Draw the right polygon");
-				} 
+					// cur.setMatrix(VO3D.getMatrix_identity());
+					if (isDebug)
+						System.out.println("Drew the right polygon");
+					// cone_center = new Point3D(h1, -h2, 0);
+					// if(curp.isSelected())
+					// draw.drawCone(gl, curp, cone_center);
+				}
 			} else {// polygons after the 1st
-				if(isDebug) System.out.println("Draw the non-first polygon");
+				if (isDebug)
+					System.out.println("Draw the non-first polygon");
 				// Find out the neighbor polygon that has been drawn.
 				// At the same time, determine the hinge.
 				h = ds.findHinge(curp, prevp);
 				if (h == null) {
 					for (int i = 0; i < bak.size(); i++) {
-						//System.out.println("i = " + i);
-						//check if cur is connected to some previous polygon
-						h = ds.findHinge(curp, bak.get(i));	
-						//System.out.println("h = " + h);
+						// System.out.println("i = " + i);
+						// check if cur is connected to some previous polygon
+						h = ds.findHinge(curp, bak.get(i));
+						// System.out.println("h = " + h);
 						if (h != null) {
 							if (h.isLeftPolygon(curp))
 								prevp = h.getRightPolygon();
@@ -247,61 +274,77 @@ public class Pattern implements GLEventListener, MouseListener,
 							break;
 						}
 					}
-					if (h == null){
+					if (h == null) {
 						System.out
 								.println("can't find a hinge that the current polygon connects to.");
+						System.out.println(curp);
+						break;
 					}
 				}
-				if(isDebug){
-					System.out.println("find a hinge: " + Integer.toString(h.getAddress(), 16));
-					System.out.println("prev: " + Integer.toString(prevp.getAddress(), 16));
+				if (isDebug) {
+					System.out.println("find a hinge: "
+							+ Integer.toString(h.getAddress(), 16));
+					System.out.println("prev: "
+							+ Integer.toString(prevp.getAddress(), 16));
 				}
-				
+
 				p3d = prevp.getPolygon3D();
 				if (h.isLeftPolygon(curp)) {
-					if(isDebug) System.out.println("Draw the left polygon");
+					if (isDebug)
+						System.out.println("Draw the left polygon");
 
 					// get the previous connected edge
 					edge = p3d.getEdgeAt(h.getRightPolygonIndex());
-					if(isDebug)System.out.println("check index: "+h.getRightPolygonIndex());
-					opp = prevp.setCoordsOpp3D(h.getRightPolygonIndex(), false); //p3d.getVertices()[(h.getRightPolygonIndex() + 1) % p3d.getN()];
+					opp = prevp.setCoordsOpp3D(h.getRightPolygonIndex(), false);
 					cen = VO3D.middlePoint(edge);
-					curp.setCoordsPolygon3D(h.getLeftPolygonIndex(), true); // set coordinates of the polygon			
-				} else {//h.isRightPolygon(curp)
-					if(isDebug)System.out.println("Draw the right polygon");
+					// set coordinates of the polygon
+					curp.setCoordsPolygon3D(h.getLeftPolygonIndex(), true);
+
+					// calculate the axis
+					if (VO3D.adjustAxis(opp, false)) {
+						axis = VO3D.diff_vector(edge.getP2(), edge.getP1());
+					} else {
+						axis = VO3D.diff_vector(edge.getP1(), edge.getP2());
+					}
+
+					// use axis as new z axis, and calculate the new local
+					// coordinate system
+					ZRuvw = VO3D.formLocalCoordinates3D(axis, 0);
+					// cone_center = new Point3D(-h1, -h2, 0);
+				} else {
+					if (isDebug)
+						System.out.println("Draw the right polygon");
 
 					edge = p3d.getEdgeAt(h.getLeftPolygonIndex());
-					opp = prevp.setCoordsOpp3D(h.getLeftPolygonIndex(), true); //p3d.getVertices()[(h.getLeftPolygonIndex() + 1) % p3d.getN()];
+					opp = prevp.setCoordsOpp3D(h.getLeftPolygonIndex(), true);
 					cen = VO3D.middlePoint(edge);
-					curp.setCoordsPolygon3D(h.getRightPolygonIndex(), false); // set coordinates of the polygon
-				}	
-				
-				// calculate the axis
-				if(VO3D.adjustAxis(opp, false)){
-					axis = VO3D.diff_vector(edge.getP2(), edge.getP1());
-				}else{
-					axis = VO3D.diff_vector(edge.getP1(), edge.getP2());
+					// set coordinates of the polygon
+					curp.setCoordsPolygon3D(h.getRightPolygonIndex(), false);
+
+					// calculate the new axis
+					if (VO3D.adjustAxis(opp, false)) {
+						axis = VO3D.diff_vector(edge.getP2(), edge.getP1());
+					} else {
+						axis = VO3D.diff_vector(edge.getP1(), edge.getP2());
+					}
+
+					// use axis as new z axis, and calculate the new local
+					// coordinate system
+					ZRuvw = VO3D.formLocalCoordinates3D(axis,0);
+					// cone_center = new Point3D(h1, -h2, 0);
 				}
-				
+
 				// calculate the new coordinates
-				T = VO3D.getMatrix_translation(cen.getX(), cen.getY(), cen.getZ());	
-				// use axis as new z axis, and calculate the new local coordinate system
-				ZRuvw = VO3D.formLocalCoordinates3D(axis, 0);
+				T = VO3D.getMatrix_translation(cen.getX(), cen.getY(),
+						cen.getZ());
 				M = VO3D.matrixMultiply(T, ZRuvw);
-				
-				// load the previous matrix
-				gl.glLoadMatrixd(prevp.getMatrixPattern(), 0); // load matrix saved for prev
-				//System.out.println("Print previous matrix");
-				//printMatrix(prevp.getMatrix());
-			
-				if(isDebug){
-					System.out.println("left polygon index: " + h.getLeftPolygonIndex());
-					System.out.println("right polygon index: " + h.getRightPolygonIndex());
-					System.out.println("edge: " + edge.getP1() + ", " + edge.getP2());
-					System.out.println("opp: " + (h.getLeftPolygonIndex() + 1) % p3d.getN());
+
+				if (isDebug) {
+					System.out.println("opp: " + opp);
 					System.out.println("cen: " + cen);
 					System.out.println("Hinge angle: " + h.getAngle());
 					System.out.println("Axis: " + axis);
+
 					System.out.println("T: ");
 					VO3D.printMatrix44(T);
 					System.out.println("ZRuvw: ");
@@ -309,40 +352,47 @@ public class Pattern implements GLEventListener, MouseListener,
 					System.out.println("M: ");
 					VO3D.printMatrix44(M);
 				}
-				
+
 				VO3D.flatMatrix44(nextmat3d, M);
+				// load the starting matrix
+				gl.glLoadMatrixd(startmat3d, 0);
+				// load prev matrix saved
+				gl.glMultMatrixd(prevp.getMatrix3D(), 0);
 				// multiply the new local coordinate system
 				gl.glMultMatrixd(nextmat3d, 0);
 
-				// get the matrix for the current polygon
-				gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, curmat3d, 0);
 				// set matrix for curp
-				curp.setMatrixPattern(curmat3d); 
+				curp.setMatrix3D(VO3D.matrixMultiply(prevp.getMatrix3D(),
+						nextmat3d));
+				VO3D.printMatrix16(VO3D.matrixMultiply(prevp.getMatrix3D(),
+						nextmat3d));
 				bak.add(curp);
-					
-				draw.drawLocalCoords(gl);
-				draw.drawHinge(gl, glu, h.getColor());
-				// draw the polygon
+
+				// draw.drawLocalCoords(gl);
+				// draw.drawHinge(gl, glu, h.getColor());
 				draw.drawPolygon(gl, curp, fc, bc);
-				
+				// if(curp.isSelected())
+				// draw.drawCone(gl, curp, cone_center);
 			}
 
 			// enqueue neighboring nodes
 			pvec = ds.getNeighbors(curp);
-			if(isDebug) System.out.println("neighbors that have not been visited: " + pvec.size());
-			// loop through the unvisited neighbors and enqueue them
+			if (isDebug)
+				System.out.println("neighbors that have not been visited: "
+						+ pvec.size());
 			for (int i = 0; i < pvec.size(); i++) {
 				p = pvec.get(i);
 				queue.enqueue(p);
 				p.setVisited(true);
-				if(isDebug)
-					System.out.println("enqueue " + Integer.toString(p.getAddress(), 16));
+				if (isDebug)
+					System.out.println("enqueue "
+							+ Integer.toString(p.getAddress(), 16));
 			}
-			
+
 			prevp = curp;
-			//System.out.println();
+			// System.out.println();
 		}
-		
+
 		// set all polygons as non-visited
 		ds.setPolygonVectorUnvisited();
 		bak.clear();

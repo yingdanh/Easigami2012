@@ -15,7 +15,7 @@ public class CommPortModem extends CommPortOpen {
 	/** The last line read from the serial port. */
 	protected int response;
 	/** A flag to control debugging output. */
-	protected boolean debug = false;
+	protected boolean debug = true;
 	
 	// The following variables are for the debugging purpose
 	private final boolean checkTime = false;
@@ -38,6 +38,7 @@ public class CommPortModem extends CommPortOpen {
 			System.out.println();
 		}
 		os.print(s);
+		
 		//os.print("\r\n");
 		// Expect the modem to echo the command.
 		/*if (!expect(s)) {
@@ -60,7 +61,9 @@ public class CommPortModem extends CommPortOpen {
 	 * @return the received byte
 	 */
 	public int receive() throws IOException {
+		System.out.println("here!");
 		response = is.readUnsignedByte();
+		System.out.println("there!");
 		if (debug) {
 			System.out.print("<<< ");
 			System.out.print(response);

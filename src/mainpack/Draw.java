@@ -1,11 +1,16 @@
 package mainpack;
 
+import java.util.Vector;
+
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
+import mygeom.FacetSTL;
 import mygeom.Point3D;
 import mygeom.Polygon3D;
+import mygeom.SolidSTL;
+import mygeom.VO3D;
 
 public class Draw{
 	//private VectorOp3d vecOp = null;
@@ -156,8 +161,116 @@ public class Draw{
 		//draw hinge
         gl.glColor3f(1.0f, 0.0f, 0.0f);
         gl.glTranslated(loc.getX(), loc.getY(), loc.getZ());
-        drawSphere(glu, 2);
+        drawSphere(glu, 0.5);
         gl.glTranslated(-loc.getX(), -loc.getY(), -loc.getZ());
+	}
+	
+	public void drawSolidSTL(GL gl, GLU glu, SolidSTL solid, float[] fc, float[] bc){
+		Vector<FacetSTL> faces = solid.getFaces();
+		//System.out.println("This solid has " + faces.size() + " faces.");
+		FacetSTL face;
+		byte[] color;
+		Point3D pt;
+		Point3D centroid;
+		Point3D normal, nn;
+		
+		for(int i=0; i<faces.size(); i++){
+			face = faces.get(i);
+			color = face.getColor();
+			//System.out.println(color[0] + " " + color[1] + " " + color[2]);
+			
+			//draw centroid
+			centroid = face.getCentroid();
+			if(centroid != null){
+				drawHinge(gl, glu, centroid);
+			}
+			//draw normal
+			normal = face.getNormal();
+			nn = VO3D.matrix41_mult(VO3D.getMatrix_translation(centroid.getX(), centroid.getY(), centroid.getZ()), normal);
+			this.drawLine(gl, centroid, nn);
+			
+			//draw front
+			gl.glBegin(GL.GL_POLYGON);
+			if(fc!=null)
+				gl.glColor3f(fc[0], fc[1], fc[2]);
+			else
+				gl.glColor3f(0.7f, 0.7f, 0.7f); 
+			for(int j=0; j<face.getN(); j++){
+				pt = face.getVertexAt(j);
+				gl.glVertex3d(pt.getX(), pt.getY(), pt.getZ());
+			}
+			gl.glEnd();
+			
+			//draw back
+			gl.glBegin(GL.GL_POLYGON);
+			if(bc!=null)
+				gl.glColor3f(bc[0], bc[1], bc[2]);
+			else
+				gl.glColor3ub((byte)color[0], (byte)color[1], (byte)color[2]);
+			for(int j=face.getN()-1; j>=0; j--){
+				pt = face.getVertexAt(j);
+				gl.glVertex3d(pt.getX(), pt.getY(), pt.getZ());
+			}
+			gl.glEnd();
+			
+			//draw wireframe
+			gl.glLineWidth(4.0f);
+			gl.glBegin(GL.GL_LINE_LOOP); 
+			gl.glColor3f(1.0f, 1.0f, 1.0f);
+			for(int j=0; j<face.getN(); j++){
+				pt = face.getVertexAt(j);
+				gl.glVertex3d(pt.getX(), pt.getY(), pt.getZ());
+			}
+			gl.glEnd();
+		}
+	}
+	
+	public void drawConvexHull(GL gl, GLU glu, SolidSTL solid, float[] fc, float[] bc){
+		Vector<FacetSTL> chfaces = solid.getConvexHull();
+		System.out.println("This solid has " + solid.getConvexHull().size() + " faces.");
+		FacetSTL face;
+		byte[] color;
+		Point3D pt;
+		
+		for(int i=0; i<chfaces.size(); i++){
+			face = chfaces.get(i);
+			color = face.getColor();
+			//System.out.println(color[0] + " " + color[1] + " " + color[2]);
+						
+			//draw front
+			gl.glBegin(GL.GL_POLYGON);
+			if(fc!=null)
+				gl.glColor3f(fc[0], fc[1], fc[2]);
+			else
+				gl.glColor3f(0.7f, 0.7f, 0.7f); 
+			for(int j=0; j<face.getN(); j++){
+				pt = face.getVertexAt(j);
+				gl.glVertex3d(pt.getX(), pt.getY(), pt.getZ());
+			}
+			gl.glEnd();
+			
+			//draw back
+			gl.glBegin(GL.GL_POLYGON);
+			if(bc!=null)
+				gl.glColor3f(bc[0], bc[1], bc[2]);
+			else
+				gl.glColor3ub((byte)color[0], (byte)color[1], (byte)color[2]);
+			for(int j=face.getN()-1; j>=0; j--){
+				pt = face.getVertexAt(j);
+				gl.glVertex3d(pt.getX(), pt.getY(), pt.getZ());
+			}
+			gl.glEnd();
+			
+			//draw wireframe
+			gl.glLineWidth(4.0f);
+			gl.glBegin(GL.GL_LINE_LOOP); 
+			gl.glColor3f(1.0f, 1.0f, 1.0f);
+			for(int j=0; j<face.getN(); j++){
+				pt = face.getVertexAt(j);
+				gl.glVertex3d(pt.getX(), pt.getY(), pt.getZ());
+			}
+			gl.glEnd();
+		}
 	}
 	
 	public void drawCone(GL gl, Polygon poly, Point3D center){
@@ -230,7 +343,7 @@ public class Draw{
 	
 	public void drawLine(GL gl, Point3D p1, Point3D p2){
 		gl.glBegin(GL.GL_LINES);
-		gl.glColor3f(0.0f, 0.0f, 1.0f);
+		gl.glColor3f(0.0f, 0.0f, 0.5f);
 		gl.glVertex3d(p1.getX(), p1.getY(), p1.getZ());
 		gl.glVertex3d(p2.getX(), p2.getY(), p2.getZ());
 		gl.glEnd();

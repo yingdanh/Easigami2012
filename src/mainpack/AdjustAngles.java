@@ -12,6 +12,7 @@ public class AdjustAngles {
 	private Vector<Polygon> polygonVector;
 	private Vector<Hinge> hingeVector;
 	private Hinge[][] adjmat;
+	private boolean isDebug = true;
 
 	public AdjustAngles(DataStructure ds) {
 		this.ds = ds;
@@ -30,14 +31,27 @@ public class AdjustAngles {
 		}
 		
 		Vector<Vector<Integer>> cycles = this.findCyclesVertex();
-		printAllCycles(cycles);
+		//if there is no cycle, stop 
+		if(cycles.size() == 0) 
+			cycles = this.findCyclesSpanningTree();
+		if(cycles.size() == 0)
+			return;
+		
+		if(isDebug)
+			printAllCycles(cycles);
+		//if the cycle has less than 2 polygons, stop
 		MatrixChains chains = getVertexChains(cycles);
-		for (int i = 0; i < chains.getLength(); i++){
-			chains.chains[i].printChain();
-		}
+		if(chains == null) 
+			return;
+		/*if(isDebug){//print out the matrix chain of each cycle
+			for (int i = 0; i < chains.getLength(); i++){
+				chains.chains[i].printChain();
+			}
+		}*/
 		
 		for (int i = 0; i < chains.getLength(); i++){
 			MatrixChain chain = chains.chains[i];
+			if(chain == null) return;
 			for (int j = 0; j < chain.matrices.length; ++ j) {
 				MatrixHolder holder = chain.matrices[j];
 				if (holder instanceof DihedralAngle) {
@@ -54,18 +68,20 @@ public class AdjustAngles {
 		for (int i = 0; i < angles.length; ++ i) {
 			if (Double.isNaN(angles[i])) {
 				cycleCover = false;
+				//angles[i] = hingeVector.get(i).getRawAngleFromPot();
 				System.out.println("*@*@*@* Failure in cycle cover for shape - not running optimiser *@*@*@*@");
 			}
 		}
 		if (cycleCover) {
-		    angles = Newton.runNewton(chains, angles);
-		    this.setAdjustedAngles2Hinges(angles);
+		    OptimisationReport report = Newton.runNewton(chains, angles);
+		    this.setAdjustedAngles2Hinges(report.angles);
 		}
 	}
 
 
 	public MatrixChains getVertexChains(Vector<Vector<Integer>> cycles) {
-		System.out.println("in getVertexChains");
+		if(isDebug)
+			System.out.println("AdjustAngles::getVertexChains");
 		MatrixChains chains = new MatrixChains(cycles.size());
 		Vector<Integer> cycle;
 		MatrixChain togo;
@@ -81,7 +97,9 @@ public class AdjustAngles {
 
 	// compute MatrixChain from a cycle
 	public MatrixChain getVertexChain(Vector<Integer> cycle) {
-		System.out.println("in getVertexChain " + cycle.size());
+		System.out.println("AdustedAngles::getVertexChain " + cycle.size());
+		if(cycle.size()<2)
+			return null;
 		MatrixChain togo = new MatrixChain((cycle.size() + 1) * 3);
 		int prevIndex = 0;
 		int curIndex = 1;
@@ -120,7 +138,6 @@ public class AdjustAngles {
 				angle = Math.PI;
 			} else {
 				angle = h.getRawAngleFromPot();
-				// angle = Math.acos(-1.0 / 3.0) + 0.1;
 			}
 
 			// System.out.println("h: 0x" + Integer.toString(h.getAddress(),
@@ -175,8 +192,10 @@ public class AdjustAngles {
 			prevp = curp;
 		}
 
-		System.out.println("check resultant matrix");
-		VO3D.printMatrix44(resM);
+		if(isDebug){
+			System.out.println("check resultant matrix");
+			VO3D.printMatrix44(resM);
+		}
 		return togo;
 	}
 
@@ -284,12 +303,13 @@ public class AdjustAngles {
 
 	// print all cycles
 	public void printAllCycles(Vector<Vector<Integer>> cycles) {
-		System.out.println("printAllCycles: ");
+		System.out.println("AdjustAngles::printAllCycles: ");
 		Vector<Integer> cycle;
 
+		System.out.println("There are " + cycles.size() + " cycles.");
 		for (int i = 0; i < cycles.size(); i++) {
-			// System.out.println("print one cycle");
 			cycle = cycles.get(i);
+			System.out.println("print one cycle " + cycle.size());
 			for (int j = 0; j < cycle.size(); j++) {
 				System.out.print(cycle.get(j) + " ");
 			}
@@ -306,7 +326,7 @@ public class AdjustAngles {
 
 	// find cycles based on each vertex
 	public Vector<Vector<Integer>> findCyclesVertex() {
-		System.out.println("in findCyclesVertex");
+		//System.out.println("in findCyclesVertex");
 		Vector<Vector<Integer>> cycles = new Vector<Vector<Integer>>();
 		Vector<Integer> cycle;
 		Polygon p;
@@ -391,6 +411,8 @@ public class AdjustAngles {
 
 	// set new angles back to hinges
 	public void setAdjustedAngles2Hinges(double[] angles) {
+		if(angles == null)
+			return;
 		for (int i = 0; i < hingeVector.size(); i++) {
 			hingeVector.get(i).setAngle(angles[i]);
 		}

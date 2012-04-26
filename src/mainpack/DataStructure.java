@@ -18,7 +18,7 @@ public class DataStructure {
 	// private Vector<Hinge> danglingVector;
 	//private boolean isConfigured;
 	private boolean isReady;
-	private boolean isDebug = true;
+	private boolean isDebug = false;
 
 	public DataStructure() {
 		hingeVector = new Vector<Hinge>();

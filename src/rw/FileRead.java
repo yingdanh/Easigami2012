@@ -18,7 +18,7 @@ public class FileRead {
 	private DataInputStream in;
 	private BufferedReader br;
 	private Vector<Hinge> hvec;
-	private final boolean isDebug = false; 
+	private boolean isDebug = false; 
 	
 	public FileRead(String fn) throws FileNotFoundException{
 		filename = fn;

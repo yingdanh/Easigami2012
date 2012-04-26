@@ -171,16 +171,19 @@ public class Polygon {
 		System.out.println("Polygon::calculateAbsVertices");
 		Point3D[] vs = poly.getVertices();
 		Point3D np;
-		Point3D normal = new Point3D(0, 1, 0);
+		//Point3D normal = new Point3D(0, 1, 0);
 		
-		Point3D nnormal = VO3D.calPoint(this.getMatrix3D(), normal);
-		poly.setAbsNormal(nnormal);
+		//Point3D nnormal = VO3D.calPoint(this.getMatrix3D(), normal);
+		//poly.setAbsNormal(nnormal);
 		//System.out.println("nnormal: " + nnormal);
 		for(int j=0; j<vs.length; j++){//for each vertex
 			np = VO3D.calPoint(this.getMatrix3D(), vs[j]);
 			System.out.println("np: " + np);
 			poly.setAbsVertexAt(j, np);
 		}
+		
+		Point3D normal = VO3D.getNormal(poly.getAbsVertexAt(0), poly.getAbsVertexAt(1), poly.getAbsVertexAt(2));
+		poly.setAbsNormal(normal);
 	}
 	
 	public boolean[] getUnVisitedVertices(){

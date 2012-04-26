@@ -16,14 +16,12 @@ public class GamiThread extends Thread {
 	private boolean portOpen;
 	private boolean isDebug = false;
 	
-	// read an input file, instead of receiving data from Easigami
-	private static final boolean isWritingFile = false; // true - write to a file
-	private String filename = "tui/4triangles_flat" + ".ezg";
+	private String filename = null;
+	private boolean isWritingFile = false; // true - write to a file
 	private FileWrite fw;
-	private static final boolean isReadingFile = true;	//true - read a file
+	// read an input file, instead of receiving data from Easigami
+	private boolean isReadingFile = false;	//true - read a file
 	private FileRead fr;
-	//private int eg = 0; 
-	//0-tetrahedron; 1-half dodecahedron; 2-cone with pentage as base; 3-truncated tetrahedron
 	private boolean isAdjusted = true;
 	
 	public GamiThread(MainController ctrl, DataStructure ds, CommPortModem modem){
@@ -31,24 +29,11 @@ public class GamiThread extends Thread {
 		this.ctrl = ctrl;
 		this.ds = ds;
 		portOpen = true;
+		if (ctrl.isTestMode()) {
+		    isReadingFile = true;
+		}
 		
-		if(isReadingFile){
-			try {
-				fr = new FileRead(filename);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-		}else{
-			this.modem = modem;
-		}
-				
-		if (isWritingFile) {
-			try {
-				fw = new FileWrite(filename);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		this.modem = modem;
 	}
 		
 	public void run(){
@@ -59,6 +44,7 @@ public class GamiThread extends Thread {
 			int response = 0; // signed
 		
 			if(isReadingFile){
+				System.out.println("is reading a TUI file");
 				//reading data from a file, and 
 				//form the data structure based on the file
 				ds.clearHingeVector();
@@ -66,6 +52,7 @@ public class GamiThread extends Thread {
 				fr.readFile(ds);
 			}else{
 				//using the easigami TUI
+				System.out.println("using the Easigami TUI");
 				do{
 					try {
 						modem.send(startStr);
@@ -95,42 +82,48 @@ public class GamiThread extends Thread {
 			
 					//topology
 					findTopology();
-			
+					if(isWritingFile)
+						ds.printVectors(isWritingFile, fw);
 					//modem.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		
-			if(isWritingFile)
-				ds.printVectors(isWritingFile, fw);
 			if(isWritingFile){
+				//ds.printVectors(isWritingFile, fw);
+				this.isWritingFile = false;
 				fw.close();
+				break;
 			}
-			if(isReadingFile)fr.close();
 		
 			//System.out.println("Build the Adjacency Matrix.");
 			ds.buildAdjacencyMatrix();
-			if(isAdjusted){
+			if(isAdjusted && ds.getPolygonVector().size()>2){
 				aa = new AdjustAngles(ds);
 				aa.runNewton();
-				//double a = Math.acos(1/3.0);
-				//aa.setAdjustedAngles2Hinges(new double[]{a, a, a, a, a});
 			}
 			ds.setReady(true);
 			if (!ctrl.isTestMode()) {
+				ctrl.getRenderer().setTUIMode(true);
 			    ctrl.getRenderer().refresh();
 			    ctrl.getPattern().refresh();
 			}
 			//ds.setReady(false);
-			//portOpen = false;
 			System.out.println("\n&&&&&& &&&&&& &&&&&&\n");
+			if (ctrl.isTestMode()) {
+			   System.exit(0);
+			}
 			
-			//break;
+			if (this.isReadingFile){
+				this.isReadingFile = false;
+				fr.close();
+				break;
+			}
 		}
 		
 		//close the port while not running
-		if(!isReadingFile){
+		if(modem != null){
 			try {
 				modem.close();
 			} catch (IOException e) {
@@ -278,4 +271,29 @@ public class GamiThread extends Thread {
 			System.out.println("$ $ $ $ $ $\n");
 	}
 	
+	public void setReadingFile(String fn){
+		filename = fn;
+		try {
+			fr = new FileRead(filename);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		isReadingFile = true;
+	}
+	
+	public void setWritingFile(String fn){
+		filename = fn;
+		isWritingFile = true;
+		if (isWritingFile) {
+			try {
+				fw = new FileWrite(filename);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void setModem(CommPortModem modem){
+		this.modem = modem;
+	}
 }

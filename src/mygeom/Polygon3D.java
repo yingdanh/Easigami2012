@@ -685,52 +685,52 @@ public class Polygon3D {
 		if (isLeft) {
 			switch (e_index) {
 			case 0:
-				ps[0] = new Point3D(0, 0, -hlen);
-				ps[1] = new Point3D(-s1, 0, -hlen - s2);
-				ps[2] = new Point3D(-s1 * 2, 0, -hlen);
-				ps[3] = new Point3D(-s1 * 2, 0, hlen);
-				ps[4] = new Point3D(-s1, 0, hlen + s2);
-				ps[5] = new Point3D(0, 0, hlen);
+				ps[5] = new Point3D(0, 0, -hlen);
+				ps[4] = new Point3D(-s1, 0, -hlen - s2);
+				ps[3] = new Point3D(-s1 * 2, 0, -hlen);
+				ps[2] = new Point3D(-s1 * 2, 0, hlen);
+				ps[1] = new Point3D(-s1, 0, hlen + s2);
+				ps[0] = new Point3D(0, 0, hlen);
 				break;
 			case 1:
-				ps[0] = new Point3D(0, 0, hlen);
-				ps[1] = new Point3D(0, 0, -hlen);
-				ps[2] = new Point3D(-s1, 0, -hlen - s2);
-				ps[3] = new Point3D(-s1 * 2, 0, -hlen);
-				ps[4] = new Point3D(-s1 * 2, 0, hlen);
-				ps[5] = new Point3D(-s1, 0, hlen + s2);
+				ps[1] = new Point3D(0, 0, hlen);
+				ps[0] = new Point3D(0, 0, -hlen);
+				ps[5] = new Point3D(-s1, 0, -hlen - s2);
+				ps[4] = new Point3D(-s1 * 2, 0, -hlen);
+				ps[3] = new Point3D(-s1 * 2, 0, hlen);
+				ps[2] = new Point3D(-s1, 0, hlen + s2);
 				break;
 			case 2:
-				ps[0] = new Point3D(-s1, 0, hlen + s2);
-				ps[1] = new Point3D(0, 0, hlen);
-				ps[2] = new Point3D(0, 0, -hlen);
-				ps[3] = new Point3D(-s1, 0, -hlen - s2);
-				ps[4] = new Point3D(-s1 * 2, 0, -hlen);
-				ps[5] = new Point3D(-s1 * 2, 0, hlen);
+				ps[3] = new Point3D(-s1, 0, hlen + s2);
+				ps[2] = new Point3D(0, 0, hlen);
+				ps[1] = new Point3D(0, 0, -hlen);
+				ps[0] = new Point3D(-s1, 0, -hlen - s2);
+				ps[5] = new Point3D(-s1 * 2, 0, -hlen);
+				ps[4] = new Point3D(-s1 * 2, 0, hlen);
 				break;
 			case 3:
-				ps[0] = new Point3D(-s1 * 2, 0, hlen);
-				ps[1] = new Point3D(-s1, 0, hlen + s2);
-				ps[2] = new Point3D(0, 0, hlen);
-				ps[3] = new Point3D(0, 0, -hlen);
-				ps[4] = new Point3D(-s1, 0, -hlen - s2);
-				ps[5] = new Point3D(-s1 * 2, 0, -hlen);
+				ps[5] = new Point3D(-s1 * 2, 0, hlen);
+				ps[4] = new Point3D(-s1, 0, hlen + s2);
+				ps[3] = new Point3D(0, 0, hlen);
+				ps[2] = new Point3D(0, 0, -hlen);
+				ps[1] = new Point3D(-s1, 0, -hlen - s2);
+				ps[0] = new Point3D(-s1 * 2, 0, -hlen);
 				break;
 			case 4:
-				ps[0] = new Point3D(-s1 * 2, 0, -hlen);
-				ps[1] = new Point3D(-s1 * 2, 0, hlen);
-				ps[2] = new Point3D(-s1, 0, hlen + s2);
-				ps[3] = new Point3D(0, 0, hlen);
-				ps[4] = new Point3D(0, 0, -hlen);
-				ps[5] = new Point3D(-s1, 0, -hlen - s2);
+				ps[1] = new Point3D(-s1 * 2, 0, -hlen);
+				ps[0] = new Point3D(-s1 * 2, 0, hlen);
+				ps[5] = new Point3D(-s1, 0, hlen + s2);
+				ps[4] = new Point3D(0, 0, hlen);
+				ps[3] = new Point3D(0, 0, -hlen);
+				ps[2] = new Point3D(-s1, 0, -hlen - s2);
 				break;
 			case 5:
-				ps[0] = new Point3D(-s1, 0, -hlen - s2);
-				ps[1] = new Point3D(-s1 * 2, 0, -hlen);
-				ps[2] = new Point3D(-s1 * 2, 0, hlen);
-				ps[3] = new Point3D(-s1, 0, hlen + s2);
-				ps[4] = new Point3D(0, 0, hlen);
-				ps[5] = new Point3D(0, 0, -hlen);
+				ps[3] = new Point3D(-s1, 0, -hlen - s2);
+				ps[2] = new Point3D(-s1 * 2, 0, -hlen);
+				ps[1] = new Point3D(-s1 * 2, 0, hlen);
+				ps[0] = new Point3D(-s1, 0, hlen + s2);
+				ps[5] = new Point3D(0, 0, hlen);
+				ps[4] = new Point3D(0, 0, -hlen);
 				break;
 			default:
 				System.out.println("Edge index error!");
@@ -739,52 +739,52 @@ public class Polygon3D {
 		} else {
 			switch (e_index) {
 			case 0:
-				ps[0] = new Point3D(0, 0, hlen);
-				ps[1] = new Point3D(s1, 0, hlen + s2);
-				ps[2] = new Point3D(s1 * 2, 0, hlen);
-				ps[3] = new Point3D(s1 * 2, 0, -hlen);
-				ps[4] = new Point3D(s1, 0, -hlen - s2);
-				ps[5] = new Point3D(0, 0, -hlen);
+				ps[5] = new Point3D(0, 0, hlen);
+				ps[4] = new Point3D(s1, 0, hlen + s2);
+				ps[3] = new Point3D(s1 * 2, 0, hlen);
+				ps[2] = new Point3D(s1 * 2, 0, -hlen);
+				ps[1] = new Point3D(s1, 0, -hlen - s2);
+				ps[0] = new Point3D(0, 0, -hlen);
 				break;
 			case 1:
-				ps[0] = new Point3D(0, 0, -hlen);
-				ps[1] = new Point3D(0, 0, hlen);
-				ps[2] = new Point3D(s1, 0, hlen + s2);
-				ps[3] = new Point3D(s1 * 2, 0, hlen);
-				ps[4] = new Point3D(s1 * 2, 0, -hlen);
-				ps[5] = new Point3D(s1, 0, -hlen - s2);
+				ps[1] = new Point3D(0, 0, -hlen);
+				ps[0] = new Point3D(0, 0, hlen);
+				ps[5] = new Point3D(s1, 0, hlen + s2);
+				ps[4] = new Point3D(s1 * 2, 0, hlen);
+				ps[3] = new Point3D(s1 * 2, 0, -hlen);
+				ps[2] = new Point3D(s1, 0, -hlen - s2);
 				break;
 			case 2:
-				ps[0] = new Point3D(s1, 0, -hlen - s2);
-				ps[1] = new Point3D(0, 0, -hlen);
-				ps[2] = new Point3D(0, 0, hlen);
-				ps[3] = new Point3D(s1, 0, hlen + s2);
-				ps[4] = new Point3D(s1 * 2, 0, hlen);
-				ps[5] = new Point3D(s1 * 2, 0, -hlen);
+				ps[3] = new Point3D(s1, 0, -hlen - s2);
+				ps[2] = new Point3D(0, 0, -hlen);
+				ps[1] = new Point3D(0, 0, hlen);
+				ps[0] = new Point3D(s1, 0, hlen + s2);
+				ps[5] = new Point3D(s1 * 2, 0, hlen);
+				ps[4] = new Point3D(s1 * 2, 0, -hlen);
 				break;
 			case 3:
-				ps[0] = new Point3D(s1 * 2, 0, -hlen);
-				ps[1] = new Point3D(s1, 0, -hlen - s2);
-				ps[2] = new Point3D(0, 0, -hlen);
-				ps[3] = new Point3D(0, 0, hlen);
-				ps[4] = new Point3D(s1, 0, hlen + s2);
-				ps[5] = new Point3D(s1 * 2, 0, hlen);
+				ps[5] = new Point3D(s1 * 2, 0, -hlen);
+				ps[4] = new Point3D(s1, 0, -hlen - s2);
+				ps[3] = new Point3D(0, 0, -hlen);
+				ps[2] = new Point3D(0, 0, hlen);
+				ps[1] = new Point3D(s1, 0, hlen + s2);
+				ps[0] = new Point3D(s1 * 2, 0, hlen);
 				break;
 			case 4:
-				ps[0] = new Point3D(s1 * 2, 0, hlen);
-				ps[1] = new Point3D(s1 * 2, 0, -hlen);
-				ps[2] = new Point3D(s1, 0, -hlen - s2);
-				ps[3] = new Point3D(0, 0, -hlen);
-				ps[4] = new Point3D(0, 0, hlen);
-				ps[5] = new Point3D(s1, 0, hlen + s2);
+				ps[1] = new Point3D(s1 * 2, 0, hlen);
+				ps[0] = new Point3D(s1 * 2, 0, -hlen);
+				ps[5] = new Point3D(s1, 0, -hlen - s2);
+				ps[4] = new Point3D(0, 0, -hlen);
+				ps[3] = new Point3D(0, 0, hlen);
+				ps[2] = new Point3D(s1, 0, hlen + s2);
 				break;
 			case 5:
-				ps[0] = new Point3D(s1, 0, hlen + s2);
-				ps[1] = new Point3D(s1 * 2, 0, hlen);
-				ps[2] = new Point3D(s1 * 2, 0, -hlen);
-				ps[3] = new Point3D(s1, 0, -hlen - s2);
-				ps[4] = new Point3D(0, 0, -hlen);
-				ps[5] = new Point3D(0, 0, hlen);
+				ps[3] = new Point3D(s1, 0, hlen + s2);
+				ps[2] = new Point3D(s1 * 2, 0, hlen);
+				ps[1] = new Point3D(s1 * 2, 0, -hlen);
+				ps[0] = new Point3D(s1, 0, -hlen - s2);
+				ps[5] = new Point3D(0, 0, -hlen);
+				ps[4] = new Point3D(0, 0, hlen);
 				break;
 			default:
 				System.out.println("Edge index error!");
@@ -815,52 +815,52 @@ public class Polygon3D {
 		if (isLeft) {
 			switch (e_index) {
 			case 0:
-				ps[0] = new Point3D(0, 0, -hlen);
-				ps[1] = new Point3D(-s1, 0, -hlen - s2);
-				ps[2] = new Point3D(-s1 * 2, 0, -hlen);
-				ps[3] = new Point3D(-s1 * 2, 0, hlen);
-				ps[4] = new Point3D(-s1, 0, hlen + s2);
-				ps[5] = new Point3D(0, 0, hlen);
+				ps[5] = new Point3D(0, 0, -hlen);
+				ps[4] = new Point3D(-s1, 0, -hlen - s2);
+				ps[3] = new Point3D(-s1 * 2, 0, -hlen);
+				ps[2] = new Point3D(-s1 * 2, 0, hlen);
+				ps[1] = new Point3D(-s1, 0, hlen + s2);
+				ps[0] = new Point3D(0, 0, hlen);
 				break;
 			case 1:
-				ps[0] = new Point3D(0, 0, hlen);
-				ps[1] = new Point3D(0, 0, -hlen);
-				ps[2] = new Point3D(-s1, 0, -hlen - s2);
-				ps[3] = new Point3D(-s1 * 2, 0, -hlen);
-				ps[4] = new Point3D(-s1 * 2, 0, hlen);
-				ps[5] = new Point3D(-s1, 0, hlen + s2);
+				ps[1] = new Point3D(0, 0, hlen);
+				ps[0] = new Point3D(0, 0, -hlen);
+				ps[5] = new Point3D(-s1, 0, -hlen - s2);
+				ps[4] = new Point3D(-s1 * 2, 0, -hlen);
+				ps[3] = new Point3D(-s1 * 2, 0, hlen);
+				ps[2] = new Point3D(-s1, 0, hlen + s2);
 				break;
 			case 2:
-				ps[0] = new Point3D(-s1, 0, hlen + s2);
-				ps[1] = new Point3D(0, 0, hlen);
-				ps[2] = new Point3D(0, 0, -hlen);
-				ps[3] = new Point3D(-s1, 0, -hlen - s2);
-				ps[4] = new Point3D(-s1 * 2, 0, -hlen);
-				ps[5] = new Point3D(-s1 * 2, 0, hlen);
+				ps[3] = new Point3D(-s1, 0, hlen + s2);
+				ps[2] = new Point3D(0, 0, hlen);
+				ps[1] = new Point3D(0, 0, -hlen);
+				ps[0] = new Point3D(-s1, 0, -hlen - s2);
+				ps[5] = new Point3D(-s1 * 2, 0, -hlen);
+				ps[4] = new Point3D(-s1 * 2, 0, hlen);
 				break;
 			case 3:
-				ps[0] = new Point3D(-s1 * 2, 0, hlen);
-				ps[1] = new Point3D(-s1, 0, hlen + s2);
-				ps[2] = new Point3D(0, 0, hlen);
-				ps[3] = new Point3D(0, 0, -hlen);
-				ps[4] = new Point3D(-s1, 0, -hlen - s2);
-				ps[5] = new Point3D(-s1 * 2, 0, -hlen);
+				ps[5] = new Point3D(-s1 * 2, 0, hlen);
+				ps[4] = new Point3D(-s1, 0, hlen + s2);
+				ps[3] = new Point3D(0, 0, hlen);
+				ps[2] = new Point3D(0, 0, -hlen);
+				ps[1] = new Point3D(-s1, 0, -hlen - s2);
+				ps[0] = new Point3D(-s1 * 2, 0, -hlen);
 				break;
 			case 4:
-				ps[0] = new Point3D(-s1 * 2, 0, -hlen);
-				ps[1] = new Point3D(-s1 * 2, 0, hlen);
-				ps[2] = new Point3D(-s1, 0, hlen + s2);
-				ps[3] = new Point3D(0, 0, hlen);
-				ps[4] = new Point3D(0, 0, -hlen);
-				ps[5] = new Point3D(-s1, 0, -hlen - s2);
+				ps[1] = new Point3D(-s1 * 2, 0, -hlen);
+				ps[0] = new Point3D(-s1 * 2, 0, hlen);
+				ps[5] = new Point3D(-s1, 0, hlen + s2);
+				ps[4] = new Point3D(0, 0, hlen);
+				ps[3] = new Point3D(0, 0, -hlen);
+				ps[2] = new Point3D(-s1, 0, -hlen - s2);
 				break;
 			case 5:
-				ps[0] = new Point3D(-s1, 0, -hlen - s2);
-				ps[1] = new Point3D(-s1 * 2, 0, -hlen);
-				ps[2] = new Point3D(-s1 * 2, 0, hlen);
-				ps[3] = new Point3D(-s1, 0, hlen + s2);
-				ps[4] = new Point3D(0, 0, hlen);
-				ps[5] = new Point3D(0, 0, -hlen);
+				ps[3] = new Point3D(-s1, 0, -hlen - s2);
+				ps[2] = new Point3D(-s1 * 2, 0, -hlen);
+				ps[1] = new Point3D(-s1 * 2, 0, hlen);
+				ps[0] = new Point3D(-s1, 0, hlen + s2);
+				ps[5] = new Point3D(0, 0, hlen);
+				ps[4] = new Point3D(0, 0, -hlen);
 				break;
 			default:
 				System.out.println("Edge index error!");
@@ -869,52 +869,52 @@ public class Polygon3D {
 		} else {
 			switch (e_index) {
 			case 0:
-				ps[0] = new Point3D(0, 0, hlen);
-				ps[1] = new Point3D(s1, 0, hlen + s2);
-				ps[2] = new Point3D(s1 * 2, 0, hlen);
-				ps[3] = new Point3D(s1 * 2, 0, -hlen);
-				ps[4] = new Point3D(s1, 0, -hlen - s2);
-				ps[5] = new Point3D(0, 0, -hlen);
+				ps[5] = new Point3D(0, 0, hlen);
+				ps[4] = new Point3D(s1, 0, hlen + s2);
+				ps[3] = new Point3D(s1 * 2, 0, hlen);
+				ps[2] = new Point3D(s1 * 2, 0, -hlen);
+				ps[1] = new Point3D(s1, 0, -hlen - s2);
+				ps[0] = new Point3D(0, 0, -hlen);
 				break;
 			case 1:
-				ps[0] = new Point3D(0, 0, -hlen);
-				ps[1] = new Point3D(0, 0, hlen);
-				ps[2] = new Point3D(s1, 0, hlen + s2);
-				ps[3] = new Point3D(s1 * 2, 0, hlen);
-				ps[4] = new Point3D(s1 * 2, 0, -hlen);
-				ps[5] = new Point3D(s1, 0, -hlen - s2);
+				ps[1] = new Point3D(0, 0, -hlen);
+				ps[0] = new Point3D(0, 0, hlen);
+				ps[5] = new Point3D(s1, 0, hlen + s2);
+				ps[4] = new Point3D(s1 * 2, 0, hlen);
+				ps[3] = new Point3D(s1 * 2, 0, -hlen);
+				ps[2] = new Point3D(s1, 0, -hlen - s2);
 				break;
 			case 2:
-				ps[0] = new Point3D(s1, 0, -hlen - s2);
-				ps[1] = new Point3D(0, 0, -hlen);
-				ps[2] = new Point3D(0, 0, hlen);
-				ps[3] = new Point3D(s1, 0, hlen + s2);
-				ps[4] = new Point3D(s1 * 2, 0, hlen);
-				ps[5] = new Point3D(s1 * 2, 0, -hlen);
+				ps[3] = new Point3D(s1, 0, -hlen - s2);
+				ps[2] = new Point3D(0, 0, -hlen);
+				ps[1] = new Point3D(0, 0, hlen);
+				ps[0] = new Point3D(s1, 0, hlen + s2);
+				ps[5] = new Point3D(s1 * 2, 0, hlen);
+				ps[4] = new Point3D(s1 * 2, 0, -hlen);
 				break;
 			case 3:
-				ps[0] = new Point3D(s1 * 2, 0, -hlen);
-				ps[1] = new Point3D(s1, 0, -hlen - s2);
-				ps[2] = new Point3D(0, 0, -hlen);
-				ps[3] = new Point3D(0, 0, hlen);
-				ps[4] = new Point3D(s1, 0, hlen + s2);
-				ps[5] = new Point3D(s1 * 2, 0, hlen);
+				ps[5] = new Point3D(s1 * 2, 0, -hlen);
+				ps[4] = new Point3D(s1, 0, -hlen - s2);
+				ps[3] = new Point3D(0, 0, -hlen);
+				ps[2] = new Point3D(0, 0, hlen);
+				ps[1] = new Point3D(s1, 0, hlen + s2);
+				ps[0] = new Point3D(s1 * 2, 0, hlen);
 				break;
 			case 4:
-				ps[0] = new Point3D(s1 * 2, 0, hlen);
-				ps[1] = new Point3D(s1 * 2, 0, -hlen);
-				ps[2] = new Point3D(s1, 0, -hlen - s2);
-				ps[3] = new Point3D(0, 0, -hlen);
-				ps[4] = new Point3D(0, 0, hlen);
-				ps[5] = new Point3D(s1, 0, hlen + s2);
+				ps[1] = new Point3D(s1 * 2, 0, hlen);
+				ps[0] = new Point3D(s1 * 2, 0, -hlen);
+				ps[5] = new Point3D(s1, 0, -hlen - s2);
+				ps[4] = new Point3D(0, 0, -hlen);
+				ps[3] = new Point3D(0, 0, hlen);
+				ps[2] = new Point3D(s1, 0, hlen + s2);
 				break;
 			case 5:
-				ps[0] = new Point3D(s1, 0, hlen + s2);
-				ps[1] = new Point3D(s1 * 2, 0, hlen);
-				ps[2] = new Point3D(s1 * 2, 0, -hlen);
-				ps[3] = new Point3D(s1, 0, -hlen - s2);
-				ps[4] = new Point3D(0, 0, -hlen);
-				ps[5] = new Point3D(0, 0, hlen);
+				ps[3] = new Point3D(s1, 0, hlen + s2);
+				ps[2] = new Point3D(s1 * 2, 0, hlen);
+				ps[1] = new Point3D(s1 * 2, 0, -hlen);
+				ps[0] = new Point3D(s1, 0, -hlen - s2);
+				ps[5] = new Point3D(0, 0, -hlen);
+				ps[4] = new Point3D(0, 0, hlen);
 				break;
 			default:
 				System.out.println("Edge index error!");

@@ -209,6 +209,7 @@ public class Hinge {
 	}
 
 	public String toString() {
+		System.out.println("Hinge " + Integer.toString(this.address, 16));
 		String str = "Hinge " + Integer.toString(this.address, 16) + ": ";
 		str += "(" + leftPot + ", " + rightPot + ")";
 		str += "[" + leftPolygon.getType() + " "

@@ -1,0 +1,22 @@
+2: 81, 111
+4: 74, 114
+a: 44, 59
+c: 93, 95
+14: 74, 25
+18: 60, 53
+24: 111, 86
+#
+Triangle_Equilateral, 32
+Triangle_Equilateral, 34
+Triangle_Equilateral, 36
+Triangle_Equilateral, 38
+Triangle_Equilateral, 3a
+Triangle_Equilateral, 3e
+#
+2: 3e, 1; 38, 0
+4: 36, 1; 3a, 1
+a: 34, 0; 32, 0
+c: 36, 2; 32, 1
+14: 38, 1; 36, 0
+18: 3e, 0; 3a, 2
+24: 38, 2; 34, 2

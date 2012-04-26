@@ -63,7 +63,8 @@ public class Point3D implements Comparable{
 		Point3D p;
 		if(o instanceof Point3D){
 			p = (Point3D)o;
-			if (p.x==x && p.y==y && p.z==z)
+			//if (p.x==x && p.y==y && p.z==z)
+			if(Math.abs(p.x-x)<1E-8 && Math.abs(p.y-y)<1E-8 && Math.abs(p.z-z)<1E-8)
 				return 0;
 		}
 		return -1;

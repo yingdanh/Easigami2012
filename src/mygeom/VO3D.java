@@ -7,16 +7,14 @@ public class VO3D extends Point3D {
 
 	/* vector addition */
 	public static Point3D add_vector(Point3D p1, Point3D p2) {
-		return new Point3D(p1.getX() + p2.getX(), p1.getY() + p2.getY(), p1
-				.getZ()
-				+ p2.getZ());
+		return new Point3D(p1.getX() + p2.getX(), p1.getY() + p2.getY(),
+				p1.getZ() + p2.getZ());
 	}
 
 	/* vector difference */
 	public static Point3D diff_vector(Point3D p1, Point3D p2) {
-		return new Point3D(p1.getX() - p2.getX(), p1.getY() - p2.getY(), p1
-				.getZ()
-				- p2.getZ());
+		return new Point3D(p1.getX() - p2.getX(), p1.getY() - p2.getY(),
+				p1.getZ() - p2.getZ());
 	}
 
 	/* vector scalar multiplication */
@@ -26,10 +24,9 @@ public class VO3D extends Point3D {
 
 	/* cross product */
 	public static Point3D cross(Point3D p1, Point3D p2) {
-		return new Point3D(p1.getY() * p2.getZ() - p1.getZ() * p2.getY(), p1
-				.getZ()
-				* p2.getX() - p1.getX() * p2.getZ(), p1.getX() * p2.getY()
-				- p1.getY() * p2.getX());
+		return new Point3D(p1.getY() * p2.getZ() - p1.getZ() * p2.getY(),
+				p1.getZ() * p2.getX() - p1.getX() * p2.getZ(), p1.getX()
+						* p2.getY() - p1.getY() * p2.getX());
 	}
 
 	/* dot product */
@@ -52,6 +49,18 @@ public class VO3D extends Point3D {
 				+ Math.pow(p.getZ(), 2));
 	}
 
+	public static double distance(Point3D p1, Point3D p2) {
+		double dx = p1.getX() - p2.getX();
+		double dy = p1.getY() - p2.getY();
+		double dz = p1.getZ() - p2.getZ();
+
+		return Math.sqrt(dx * dx + dy * dy + dz * dz);
+	}
+
+	public static Point3D getNormal(Point3D p0, Point3D p1, Point3D p2) {
+		return cross(diff_vector(p1, p0), diff_vector(p2, p0));
+	}
+
 	// get the middle point of a line
 	public static Point3D middlePoint(Line3D l) {
 		Point3D p1 = l.getP1();
@@ -72,11 +81,16 @@ public class VO3D extends Point3D {
 		return Math.toDegrees(Math.acos(cosine));
 	}
 
+	public static double getAngleRad(Point3D a, Point3D b) {
+		double cosine = dot(a, b) / (length(a) * length(b));
+		return Math.acos(cosine);
+	}
+
 	public static double[][] formLocalCoordinates2D(Point3D axis) {
 		return getBasis(axis);
 		// flatMatrix44(mat, basis);
 	}
-	
+
 	public static double[][] GetBasisTranspose(Point3D axis) {
 		double[][] basis = getBasis(axis);
 		return matrix_transpose(basis);
@@ -89,6 +103,7 @@ public class VO3D extends Point3D {
 	 */
 	public static double[][] formLocalCoordinates3D(Point3D axis, double angrad) {
 		double[][] basis = getBasis(axis);
+		printMatrix44(basis);
 		// Ruvw(T) * rotation-z * Ruvw
 		double[][] ZRuvw = matrixMultiply(matrix_transpose(basis),
 				getMatrix_rotateZ(angrad));
@@ -104,7 +119,7 @@ public class VO3D extends Point3D {
 			throw new RuntimeException("ERROR: the length of the matrix.");
 		double[][] matrix = new double[4][4];
 		for (int i = 0; i < 16; i++) {
-			matrix[i%4][i/4] = mat[i];
+			matrix[i % 4][i / 4] = mat[i];
 		}
 
 		return matrix;
@@ -132,12 +147,9 @@ public class VO3D extends Point3D {
 		}
 		return identity;
 	}
-	
-	public static double[] getIdentityMatrix(){
-		double[] identity = {1, 0, 0, 0,
-							 0, 1, 0, 0,
-							 0, 0, 1, 0,
-							 0, 0, 0, 1};
+
+	public static double[] getIdentityMatrix() {
+		double[] identity = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 		return identity;
 	}
 
@@ -145,6 +157,18 @@ public class VO3D extends Point3D {
 		double[][] togo = new double[4][4];
 		return togo;
 	}
+
+	public static double[][] point_by_angle(Point3D axis, double angle) {
+		double c = Math.cos(angle), s = Math.sin(angle), c1 = 1.0 - c;
+		double ux = axis.getX(), uy = axis.getY(), uz = axis.getZ();
+		double[][] matrix = {
+	    	 {c + ux * ux * c1,       ux * uy * c1 - uz * s,  ux * uz * c1 + uy * s, 0},
+		     {uy * ux * c1 + uz * s,  c + uy * uy * c1,       uy * uz * c1 - ux * s, 0},
+		     {uz * ux * c1 - uy * s,  uz * uy * c1 + ux * s,  c + uz * uz * c1,      0},
+		     {0, 0, 0, 1}
+		};
+		return matrix;  
+	}   
 
 	/*
 	 * Constructing a basis (4x4) from a single vector <Fundamentals of Computer
@@ -184,11 +208,11 @@ public class VO3D extends Point3D {
 
 		return result;
 	}
-	
+
 	/*
 	 * 4x4 matrix subtraction
 	 */
-	public static double[][] matrixSubtract(double[][] a, double[][] b){
+	public static double[][] matrixSubtract(double[][] a, double[][] b) {
 		double[][] c = new double[4][4];
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
@@ -197,12 +221,12 @@ public class VO3D extends Point3D {
 		}
 		return c;
 	}
-	
-	public static double sumProduct(double[][] a, double[][] b){
+
+	public static double sumProduct(double[][] a, double[][] b) {
 		double sum = 0.0;
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
-				sum += a[i][j]*b[i][j];
+				sum += a[i][j] * b[i][j];
 			}
 		}
 		return sum;
@@ -249,12 +273,10 @@ public class VO3D extends Point3D {
 		c[13] = a[1] * b[12] + a[5] * b[13] + a[9] * b[14] + a[13] * b[15];
 		c[14] = a[2] * b[12] + a[6] * b[13] + a[10] * b[14] + a[14] * b[15];
 		c[15] = a[3] * b[12] + a[7] * b[13] + a[11] * b[14] + a[15] * b[15];
-		/*for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 16; j += 4) {
-				System.out.print(c[i + j] + " ");
-			}
-			System.out.println();
-		}*/
+		/*
+		 * for (int i = 0; i < 4; i++) { for (int j = 0; j < 16; j += 4) {
+		 * System.out.print(c[i + j] + " "); } System.out.println(); }
+		 */
 		return c;
 	}
 
@@ -268,6 +290,14 @@ public class VO3D extends Point3D {
 				t[i][j] = r[j][i];
 		}
 		return t;
+	}
+
+	public static double[][] getMatrix_rotateX(double angle) {
+		double rotate_x[][] = { { 1, 0, 0, 0 },
+				{ 0, Math.cos(angle), -Math.sin(angle), 0 },
+				{ 0, Math.sin(angle), Math.cos(angle), 0 }, { 0, 0, 0, 1 } };
+
+		return rotate_x;
 	}
 
 	public static double[][] getMatrix_rotateY(double angle) {
@@ -293,28 +323,32 @@ public class VO3D extends Point3D {
 
 		return translate;
 	}
-	
-	public static Point3D calPoint(double transformation[], Point3D p){
+
+	public static double[][] getMatrix_scale(double xs, double ys, double zs) {
+		double[][] scale = { { xs, 0, 0, 0 }, { 0, ys, 0, 0 }, { 0, 0, zs, 0 },
+				{ 0, 0, 0, 1 } };
+
+		return scale;
+	}
+
+	public static Point3D calPoint(double transformation[], Point3D p) {
 		return matrix41_mult(squareMatrix44(transformation), p);
 	}
 
 	/*
-	 * m0*m'=m
-	 * m' = m*INV(m0)
+	 * m0*m'=m m' = m*INV(m0)
 	 */
 	public static double[] calTransformationMatrix(double m0[], double m[]) {
 		double[] invOut = new double[16];
 		gluInvertMatrix(m0, invOut);
 		return matrixMultiply(m, invOut);
 	}
-	
-	/*public static double[][] invertMatrix(double[][] a) {
-		double[] flat = new double[16];
-		flatMatrix44(flat, a);
-		double[] flatinv = new double[16];
-		gluInvertMatrix(flat,  flatinv);
-		return squareMatrix44(flatinv);
-	}*/
+
+	/*
+	 * public static double[][] invertMatrix(double[][] a) { double[] flat = new
+	 * double[16]; flatMatrix44(flat, a); double[] flatinv = new double[16];
+	 * gluInvertMatrix(flat, flatinv); return squareMatrix44(flatinv); }
+	 */
 
 	/*
 	 * m, invOut - 1D array with size 16
@@ -465,13 +499,14 @@ public class VO3D extends Point3D {
 
 	/**
 	 * print out a 1D matrix
+	 * 
 	 * @param a
 	 */
 	public static void printMatrix16(double[] a) {
-		/*for (int i = 0; i < a.length; i++) {
-			System.out.print(a[i] + " ");
-		}
-		System.out.println();*/
+		/*
+		 * for (int i = 0; i < a.length; i++) { System.out.print(a[i] + " "); }
+		 * System.out.println();
+		 */
 		printMatrix44(squareMatrix44(a));
 	}
 

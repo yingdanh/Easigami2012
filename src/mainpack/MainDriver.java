@@ -4,7 +4,7 @@ import javax.swing.UIManager;
 
 public class MainDriver {
 	public static void main(String[] args) {
-		System.out.println("Easigami.");
+		System.out.println("Easigami 2012.");
 		try {
 			   //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel" );
 			   UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel" );
