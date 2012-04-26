@@ -106,15 +106,10 @@ public class Newton {
   
   public static String printVec(double[] vec) {
     String togo = "";
-    
-    if(vec !=null && vec.length>0){//yingdan
-    	for (int i = 0; i < vec.length - 1; ++ i) {
-    		togo += (vec[i] + ", "); 
-    	}
-    
-    	togo += (vec[vec.length - 1]);
+    for (int i = 0; i < vec.length - 1; ++ i) {
+      togo += (vec[i] + ", "); 
     }
-    
+    togo += (vec[vec.length - 1]);
     return togo;
   }
   
@@ -123,9 +118,6 @@ public class Newton {
     double maxValue = Double.NEGATIVE_INFINITY;
     double minValue = Double.POSITIVE_INFINITY;
     
-    if(eigs == null) //yingdan
-    	return -1;
-
     for (int i = 0; i < eigs.length; ++ i) {
       double v = eigs[i];
       if (v > maxValue) {
@@ -153,7 +145,9 @@ public class Newton {
     System.out.println("dby11: " + dby11);
 
     System.out.println("numDiff: " + Newton.numDiff2d(chains, angles, 1e-5));
+
     OptimisationReport report = runNewtonRun(chains, angles, 25);
+
     if (report.gradn >= chains.tolerance) {
       report.status = "FAILED";
     }
@@ -549,4 +543,5 @@ public class Newton {
     }
     return v;
   }
+
 }

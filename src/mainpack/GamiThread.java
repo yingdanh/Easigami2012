@@ -15,11 +15,12 @@ public class GamiThread extends Thread {
 	private AdjustAngles aa;
 	private boolean portOpen;
 	private boolean isDebug = false;
-	
-	private String filename = null;
+
+	private String filename = "4triangles_flat.ezg";
 	private boolean isWritingFile = false; // true - write to a file
 	private FileWrite fw;
 	// read an input file, instead of receiving data from Easigami
+
 	private boolean isReadingFile = false;	//true - read a file
 	private FileRead fr;
 	private boolean isAdjusted = true;
@@ -29,11 +30,28 @@ public class GamiThread extends Thread {
 		this.ctrl = ctrl;
 		this.ds = ds;
 		portOpen = true;
+
 		if (ctrl.isTestMode()) {
 		    isReadingFile = true;
 		}
 		
-		this.modem = modem;
+		if(isReadingFile){
+			try {
+				fr = new FileRead(filename);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}else{
+			this.modem = modem;
+		}
+				
+		if (isWritingFile) {
+			try {
+				fw = new FileWrite(filename);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 		
 	public void run(){
@@ -111,6 +129,7 @@ public class GamiThread extends Thread {
 			}
 			//ds.setReady(false);
 			System.out.println("\n&&&&&& &&&&&& &&&&&&\n");
+
 			if (ctrl.isTestMode()) {
 			   System.exit(0);
 			}
